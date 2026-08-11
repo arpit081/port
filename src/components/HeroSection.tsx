@@ -2,9 +2,7 @@ import FadeIn from './FadeIn';
 import Magnet from './Magnet';
 import ContactButton from './ContactButton';
 
-import mascotImg from '../assets/image.png';
-
-const navLinks = ['About', 'Interests', 'Projects', 'Contact'];
+const navLinks = ['About', 'Price', 'Projects', 'Contact'];
 
 export default function HeroSection() {
   return (
@@ -32,7 +30,7 @@ export default function HeroSection() {
             as="h1"
             className="hero-heading w-full whitespace-nowrap text-center text-[14vw] font-black uppercase leading-none tracking-tight sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw]"
           >
-            Hi, i&apos;m arpit
+            Hi, i&apos;m jack
           </FadeIn>
         </div>
 
@@ -45,8 +43,8 @@ export default function HeroSection() {
               inactiveTransition="transform 0.6s ease-in-out"
             >
               <img
-                src={mascotImg}
-                alt="Arpit portrait"
+                src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/Rectangle_40443.81459862.png"
+                alt="Jack portrait"
                 className="w-[280px] select-none object-contain sm:w-[360px] md:w-[440px] lg:w-[520px]"
                 draggable={false}
               />
@@ -58,18 +56,11 @@ export default function HeroSection() {
           <FadeIn
             delay={0.35}
             y={20}
-            as="div"
-            className="max-w-[160px] sm:max-w-[220px] md:max-w-[260px]"
+            as="p"
+            className="max-w-[160px] font-light uppercase leading-snug tracking-wide text-[#D7E2EA] sm:max-w-[220px] md:max-w-[260px]"
+            style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}
           >
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#D7E2EA] sm:text-sm">
-              AI ENGINEER / BACKEND DEVELOPER
-            </p>
-            <p
-              className="font-light uppercase leading-snug tracking-wide text-[#D7E2EA]"
-              style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}
-            >
-              AI ENGINEER DRIVEN BY BUILDING SYSTEMS THAT TURN DATA INTO INTELLIGENCE.
-            </p>
+            a 3d creator driven by crafting striking and unforgettable projects
           </FadeIn>
 
           <FadeIn delay={0.5} y={20}>
