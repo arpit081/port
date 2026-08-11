@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import MusicCard from './MusicCard';
 
 const marqueeImages = [
   'https://motionsites.ai/assets/hero-space-voyage-preview-eECLH3Yc.gif',
@@ -30,9 +31,13 @@ const row2Images = marqueeImages.slice(11);
 const tileClass =
   'h-[270px] w-[420px] flex-shrink-0 rounded-2xl object-cover';
 
+const musicTileClass = 'h-[270px] w-[420px] flex-shrink-0 rounded-2xl';
+const MUSIC_TILE_INDEX = 0;
+
 export default function MarqueeSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [offset, setOffset] = useState(0);
+  const [musicExpanded, setMusicExpanded] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,7 +62,7 @@ export default function MarqueeSection() {
       ref={sectionRef}
       className="bg-[#0C0C0C] pt-24 pb-10 sm:pt-32 md:pt-40"
     >
-      <div className="flex flex-col gap-3">
+      <div className={`flex flex-col gap-3 mc-section-content${musicExpanded ? ' mc-blurred' : ''}`}>
         <div
           className="flex gap-3"
           style={{
@@ -65,15 +70,20 @@ export default function MarqueeSection() {
             willChange: 'transform',
           }}
         >
-          {[...row1Images, ...row1Images, ...row1Images].map((src, i) => (
-            <img
-              key={i}
-              src={src}
-              alt=""
-              loading="lazy"
-              className={tileClass}
-            />
-          ))}
+          {[...row1Images, ...row1Images, ...row1Images].map((src, i) => {
+            if (i % row1Images.length === MUSIC_TILE_INDEX) {
+              return (
+                <MusicCard
+                  key={`music-${i}`}
+                  className={musicTileClass}
+                  onExpandChange={setMusicExpanded}
+                />
+              );
+            }
+            return (
+              <img key={i} src={src} alt="" loading="lazy" className={tileClass} />
+            );
+          })}
         </div>
         <div
           className="flex gap-3"
