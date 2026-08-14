@@ -29,22 +29,17 @@ body,
 /* Unified Morphing Music Player Anchor */
 .music-btn-anchor {
   position: absolute;
-  bottom: 27%;
-  left: 1.5%;
-  z-index: 15;
+  bottom: 20px;
+  right: 16px;
+  z-index: 30;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 640px) {
   .music-btn-anchor {
-    left: 3%;
-    bottom: 25%;
-  }
-}
-
-@media (max-width: 480px) {
-  .music-btn-anchor {
-    left: 16px;
-    bottom: 22%;
+    bottom: 27%;
+    left: 1.5%;
+    right: auto;
+    z-index: 15;
   }
 }
 
@@ -99,15 +94,17 @@ body,
   }
 }
 
-/* Expanded card on mobile / tablet: fixed & centered nicely with safe padding */
+/* Expanded card on mobile / tablet: fixed & centered with safe padding */
 .music-player-unified[data-open="true"] {
   position: fixed;
-  bottom: 20px;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: calc(100vw - 32px);
-  max-width: 330px;
-  height: min(460px, calc(100dvh - 40px));
+  bottom: 16px;
+  left: 16px !important;
+  right: 16px !important;
+  margin: 0 auto !important;
+  transform: none !important;
+  width: calc(100% - 32px) !important;
+  max-width: 330px !important;
+  height: min(460px, calc(100dvh - 32px));
   border-radius: 28px;
   z-index: 9999;
   transform-origin: bottom center;
@@ -119,8 +116,10 @@ body,
     position: absolute;
     bottom: 0;
     left: 20px !important;
+    right: auto !important;
+    margin: 0 !important;
     transform: none !important;
-    width: 330px;
+    width: 330px !important;
     height: 460px;
     border-radius: 32px;
     z-index: 50;
@@ -131,8 +130,10 @@ body,
     position: fixed;
     bottom: 28px;
     left: 28px !important;
+    right: auto !important;
+    margin: 0 !important;
     transform: none !important;
-    width: 330px;
+    width: 330px !important;
     height: 460px;
     z-index: 9999;
   }
@@ -147,10 +148,12 @@ body,
 .music-player-unified.is-pill {
   position: fixed;
   bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100vw - 24px);
-  max-width: 340px;
+  left: 12px !important;
+  right: 12px !important;
+  margin: 0 auto !important;
+  transform: none !important;
+  width: calc(100% - 24px) !important;
+  max-width: 340px !important;
   height: 62px;
   border-radius: 999px;
   z-index: 9999;
@@ -175,9 +178,10 @@ body,
 @media (min-width: 640px) {
   .music-player-unified.is-pill {
     bottom: 28px;
-    left: 28px;
-    transform: none;
-    width: 340px;
+    left: 28px !important;
+    right: auto !important;
+    margin: 0 !important;
+    width: 340px !important;
     height: 68px;
   }
 }

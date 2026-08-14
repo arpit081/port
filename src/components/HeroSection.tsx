@@ -86,19 +86,20 @@ export default function HeroSection() {
         ))}
       </FadeIn>
 
-      <div className="relative flex flex-1 flex-col justify-between">
-        <div className="flex flex-1 items-center justify-center overflow-hidden px-2">
+      <div className="relative flex flex-1 flex-col justify-between overflow-hidden">
+        <div className="flex flex-1 items-center justify-center overflow-hidden px-2 pt-2 sm:pt-0">
           <FadeIn
             delay={0.15}
             y={40}
             as="h1"
-            className="hero-heading w-full select-none whitespace-nowrap text-center text-[14vw] font-black uppercase leading-none tracking-tight sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw]"
+            className="hero-heading w-full select-none whitespace-nowrap text-center text-[13vw] font-black uppercase leading-none tracking-tight xs:text-[14vw] sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw]"
           >
             Hi, i&apos;m arpit
           </FadeIn>
         </div>
 
-        <div className="absolute bottom-0 left-1/2 z-10 -translate-x-1/2 pointer-events-none sm:pointer-events-auto">
+        {/* Mascot: centered in upper-middle on mobile, pinned to bottom on desktop */}
+        <div className="absolute left-1/2 top-[46%] z-10 -translate-x-1/2 -translate-y-1/2 pointer-events-none sm:top-auto sm:bottom-0 sm:translate-y-0 sm:pointer-events-auto">
           <FadeIn delay={0.6} y={30}>
             <Magnet
               padding={120}
@@ -109,35 +110,35 @@ export default function HeroSection() {
               <img
                 src={mascotImg}
                 alt="Arpit portrait"
-                className="w-[min(240px,58vw)] xs:w-[270px] sm:w-[350px] md:w-[420px] lg:w-[490px] xl:w-[540px] 2xl:w-[580px] max-h-[50dvh] sm:max-h-[60dvh] select-none object-contain pointer-events-auto"
+                className="w-[180px] xs:w-[220px] sm:w-[350px] md:w-[420px] lg:w-[490px] xl:w-[540px] 2xl:w-[580px] max-h-[38dvh] xs:max-h-[44dvh] sm:max-h-[60dvh] select-none object-contain pointer-events-auto"
                 draggable={false}
               />
             </Magnet>
           </FadeIn>
         </div>
 
-        {/* Floating music button — sits in the empty pocket left of mascot */}
+        {/* Floating music button — sits in bottom-right on mobile, left pocket on desktop */}
         <div className="music-btn-anchor">
           <MusicPlayer />
         </div>
 
-        <div className="relative z-20 flex items-end justify-between px-4 pb-5 xs:px-6 xs:pb-6 sm:px-8 sm:pb-8 md:px-10 md:pb-10 pointer-events-none">
+        <div className="relative z-20 flex w-full items-end justify-between px-4 pb-5 xs:px-6 xs:pb-6 sm:px-8 sm:pb-8 md:px-10 md:pb-10 pointer-events-none">
           <FadeIn
             delay={0.35}
             y={20}
             as="div"
-            className="max-w-[200px] xs:max-w-[240px] sm:max-w-[320px] md:max-w-[380px] lg:max-w-[420px] pointer-events-auto"
+            className="w-full text-center sm:text-left sm:w-auto sm:max-w-[320px] md:max-w-[380px] lg:max-w-[420px] pointer-events-auto"
           >
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA] xs:mb-2 xs:text-xs sm:text-sm">
+            <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA] xs:mb-1.5 xs:text-xs sm:text-sm">
               AI ENGINEER / BACKEND DEVELOPER
             </p>
             <p
-              className="font-light uppercase leading-snug tracking-wide text-[#D7E2EA]"
+              className="mx-auto max-w-[320px] font-light uppercase leading-snug tracking-wide text-[#D7E2EA] sm:mx-0 sm:max-w-none"
               style={{ fontSize: 'clamp(0.72rem, 1.25vw, 1.35rem)' }}
             >
               I BUILD AI SYSTEMS, BREAK THINGS, FIX THEM, AND THEN BUILD SOMETHING ELSE.
             </p>
-            <p className="mt-2 text-[10px] font-light text-[#D7E2EA]/70 xs:mt-3 xs:text-xs sm:text-sm">
+            <p className="mx-auto mt-1.5 max-w-[300px] text-[10px] font-light text-[#D7E2EA]/70 xs:mt-2 xs:text-xs sm:mx-0 sm:max-w-none sm:text-sm">
               Mostly interested in the space where AI, software and good ideas collide.
             </p>
           </FadeIn>
