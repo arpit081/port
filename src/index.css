@@ -23,23 +23,21 @@ body,
 }
 
 /* ═══════════════════════════════════════
-   Floating Music Button & Unified Player
+   Floating Music Button
    ═══════════════════════════════════════ */
 
-/* Unified Morphing Music Player Anchor */
+/* Unified Morphing Music Player */
 .music-btn-anchor {
   position: absolute;
-  bottom: 20px;
-  right: 16px;
-  z-index: 30;
+  bottom: 27%;
+  left: 1.5%;
+  z-index: 15;
 }
 
-@media (min-width: 640px) {
+@media (max-width: 640px) {
   .music-btn-anchor {
-    bottom: 27%;
-    left: 1.5%;
-    right: auto;
-    z-index: 15;
+    left: 3%;
+    bottom: 26%;
   }
 }
 
@@ -80,62 +78,33 @@ body,
   overflow: hidden;
 }
 
+
+
 .music-player-unified[data-open="false"] {
   left: 0;
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   cursor: pointer;
 }
 
-@media (min-width: 640px) {
-  .music-player-unified[data-open="false"] {
-    width: 56px;
-    height: 56px;
-  }
-}
-
-/* Expanded card on mobile / tablet: fixed & centered with safe padding */
 .music-player-unified[data-open="true"] {
-  position: fixed;
-  bottom: 16px;
-  left: 16px !important;
-  right: 16px !important;
-  margin: 0 auto !important;
-  transform: none !important;
-  width: calc(100% - 32px) !important;
-  max-width: 330px !important;
-  height: min(460px, calc(100dvh - 32px));
-  border-radius: 28px;
-  z-index: 9999;
-  transform-origin: bottom center;
+  left: 20px;
+  width: 330px;
+  height: 460px;
+  border-radius: 32px;
 }
 
-/* Expanded card on large screens: anchored */
-@media (min-width: 1024px) {
-  .music-player-unified:not(.is-fixed)[data-open="true"] {
-    position: absolute;
-    bottom: 0;
-    left: 20px !important;
-    right: auto !important;
-    margin: 0 !important;
-    transform: none !important;
-    width: 330px !important;
-    height: 460px;
-    border-radius: 32px;
-    z-index: 50;
-    transform-origin: bottom left;
-  }
-
-  .music-player-unified.is-fixed[data-open="true"] {
+@media (max-width: 1023px) {
+  .music-player-unified[data-open="true"] {
     position: fixed;
-    bottom: 28px;
-    left: 28px !important;
-    right: auto !important;
-    margin: 0 !important;
-    transform: none !important;
-    width: 330px !important;
-    height: 460px;
-    z-index: 9999;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: calc(100% - 32px);
+    max-width: 330px;
+    height: 440px;
+    transform-origin: bottom center;
   }
 }
 
@@ -144,19 +113,21 @@ body,
   z-index: 9999;
 }
 
+/* Expanded card but fixed (when scrolled and open) */
+.music-player-unified.is-fixed[data-open="true"] {
+  bottom: 28px;
+  left: 28px;
+  width: 330px;
+  height: 460px;
+}
+
 /* When scrolled and closed (the Pill mode) */
 .music-player-unified.is-pill {
-  position: fixed;
-  bottom: 16px;
-  left: 12px !important;
-  right: 12px !important;
-  margin: 0 auto !important;
-  transform: none !important;
-  width: calc(100% - 24px) !important;
-  max-width: 340px !important;
-  height: 62px;
+  bottom: 28px;
+  left: 28px;
+  width: 340px;
+  height: 68px;
   border-radius: 999px;
-  z-index: 9999;
   /* Use the pill's glass effect */
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(255, 255, 255, 0.08) 100%),
@@ -175,17 +146,6 @@ body,
     0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-@media (min-width: 640px) {
-  .music-player-unified.is-pill {
-    bottom: 28px;
-    left: 28px !important;
-    right: auto !important;
-    margin: 0 !important;
-    width: 340px !important;
-    height: 68px;
-  }
-}
-
 .music-player-unified.is-pill.light-mode {
   border-color: rgba(0, 0, 0, 0.15);
   border-top-color: rgba(255, 255, 255, 0.5);
@@ -195,6 +155,8 @@ body,
     0 8px 32px rgba(0, 0, 0, 0.15),
     0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
+
 
 .music-player-play-icon {
   width: 100%;
@@ -401,20 +363,13 @@ body,
 .liquid-pill {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px 8px 8px;
+  gap: 12px;
+  padding: 10px 14px 10px 10px;
   width: 100%;
   height: 100%;
   border-radius: 999px;
   position: relative;
   overflow: hidden;
-}
-
-@media (min-width: 640px) {
-  .liquid-pill {
-    gap: 12px;
-    padding: 10px 14px 10px 10px;
-  }
 }
 
 /* Top specular shine */
@@ -446,8 +401,8 @@ body,
 /* ── Album art ── */
 .pill-art {
   flex-shrink: 0;
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.1);
@@ -455,13 +410,6 @@ body,
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   position: relative;
   z-index: 1;
-}
-
-@media (min-width: 640px) {
-  .pill-art {
-    width: 48px;
-    height: 48px;
-  }
 }
 
 .pill-art-img {
@@ -485,7 +433,7 @@ body,
 
 .pill-title {
   color: rgba(255, 255, 255, 0.95);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.2px;
   white-space: nowrap;
@@ -495,12 +443,6 @@ body,
   transition: all 0.5s ease;
 }
 
-@media (min-width: 640px) {
-  .pill-title {
-    font-size: 0.875rem;
-  }
-}
-
 .music-player-unified.light-mode .pill-title {
   color: rgba(0, 0, 0, 0.9);
   text-shadow: none;
@@ -508,19 +450,13 @@ body,
 
 .pill-artist {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   transition: all 0.5s ease;
-}
-
-@media (min-width: 640px) {
-  .pill-artist {
-    font-size: 0.75rem;
-  }
 }
 
 .music-player-unified.light-mode .pill-artist {
@@ -531,38 +467,23 @@ body,
 .pill-progress-row {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-top: 2px;
-}
-
-@media (min-width: 640px) {
-  .pill-progress-row {
-    gap: 6px;
-    margin-top: 4px;
-  }
+  gap: 6px;
+  margin-top: 4px;
 }
 
 .pill-waveform-container {
   flex: 1;
-  min-width: 40px;
   height: 14px;
   display: flex;
   align-items: center;
-  gap: 1.5px;
+  gap: 2px;
   cursor: pointer;
-  overflow: hidden;
-}
-
-@media (min-width: 640px) {
-  .pill-waveform-container {
-    gap: 2px;
-  }
 }
 
 .waveform-bar {
   flex: 1;
   border-radius: 99px;
-  min-width: 1.5px;
+  min-width: 2px;
   background: white;
   opacity: var(--bar-opacity-unplayed);
   transition: opacity 0.3s ease, background 0.3s ease;
@@ -602,19 +523,14 @@ body,
 
 .pill-time {
   color: rgba(255, 255, 255, 0.45);
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   font-weight: 500;
   flex-shrink: 0;
   letter-spacing: 0.1px;
   transition: all 0.5s ease;
   font-variant-numeric: tabular-nums;
+  width: 68px;
   text-align: right;
-}
-
-@media (min-width: 480px) {
-  .pill-time {
-    font-size: 0.65rem;
-  }
 }
 
 .music-player-unified.light-mode .pill-time {
@@ -624,8 +540,8 @@ body,
 /* ── Play/pause button ── */
 .pill-play-btn {
   flex-shrink: 0;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: rgba(255, 255, 255, 0.15);
@@ -639,13 +555,6 @@ body,
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.3),
     0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-@media (min-width: 640px) {
-  .pill-play-btn {
-    width: 36px;
-    height: 36px;
-  }
 }
 
 .music-player-unified.light-mode .pill-play-btn {

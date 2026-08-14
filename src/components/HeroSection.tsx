@@ -48,20 +48,16 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative flex h-[100dvh] min-h-[560px] max-h-[1400px] flex-col overflow-hidden"
+      className="flex h-screen flex-col"
+      style={{ overflowX: 'clip' }}
     >
-      <FadeIn
-        delay={0}
-        y={-20}
-        as="nav"
-        className="flex items-center justify-between gap-1.5 px-4 pt-4 xs:gap-2 xs:px-6 xs:pt-6 sm:px-8 md:px-10 md:pt-8"
-      >
+      <FadeIn delay={0} y={-20} as="nav" className="flex flex-wrap justify-center gap-x-4 gap-y-2 px-4 pt-6 md:justify-between md:gap-0 md:px-10 md:pt-8">
         {navLinks.map((link) => (
           <a
             key={link.label}
             href={link.href}
             onClick={(e) => handleScroll(e, link.href)}
-            className="group shrink-0 text-[9px] font-medium uppercase tracking-wider text-[#D7E2EA] xs:text-[11px] sm:text-xs md:text-sm lg:text-base xl:text-[1.25rem] 2xl:text-[1.35rem]"
+            className="group text-xs sm:text-sm font-medium uppercase tracking-wider text-[#D7E2EA] md:text-lg lg:text-[1.4rem]"
           >
             <span className="relative inline-block transition-transform duration-300 ease-out group-hover:scale-[1.07] origin-center">
               {link.hoverLabel ? (
@@ -86,23 +82,22 @@ export default function HeroSection() {
         ))}
       </FadeIn>
 
-      <div className="relative flex flex-1 flex-col justify-between overflow-hidden">
-        <div className="flex flex-1 items-center justify-center overflow-hidden px-2 pt-2 sm:pt-0">
+      <div className="relative flex flex-1 flex-col">
+        <div className="flex flex-1 items-center justify-center overflow-hidden">
           <FadeIn
             delay={0.15}
             y={40}
             as="h1"
-            className="hero-heading w-full select-none whitespace-nowrap text-center text-[13vw] font-black uppercase leading-none tracking-tight xs:text-[14vw] sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw]"
+            className="hero-heading w-full whitespace-nowrap text-center text-[14vw] font-black uppercase leading-none tracking-tight sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw]"
           >
             Hi, i&apos;m arpit
           </FadeIn>
         </div>
 
-        {/* Mascot: centered in upper-middle on mobile, pinned to bottom on desktop */}
-        <div className="absolute left-1/2 top-[46%] z-10 -translate-x-1/2 -translate-y-1/2 pointer-events-none sm:top-auto sm:bottom-0 sm:translate-y-0 sm:pointer-events-auto">
+        <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 sm:bottom-0 sm:top-auto sm:translate-y-0">
           <FadeIn delay={0.6} y={30}>
             <Magnet
-              padding={120}
+              padding={150}
               strength={3}
               activeTransition="transform 0.3s ease-out"
               inactiveTransition="transform 0.6s ease-in-out"
@@ -110,38 +105,40 @@ export default function HeroSection() {
               <img
                 src={mascotImg}
                 alt="Arpit portrait"
-                className="w-[180px] xs:w-[220px] sm:w-[350px] md:w-[420px] lg:w-[490px] xl:w-[540px] 2xl:w-[580px] max-h-[38dvh] xs:max-h-[44dvh] sm:max-h-[60dvh] select-none object-contain pointer-events-auto"
+                className="w-[clamp(280px,min(40vw,50vh),520px)] select-none object-contain"
                 draggable={false}
               />
             </Magnet>
           </FadeIn>
         </div>
 
-        {/* Floating music button — sits in bottom-right on mobile, left pocket on desktop */}
+        {/* Floating music button — sits in the empty pocket left of mascot */}
         <div className="music-btn-anchor">
           <MusicPlayer />
         </div>
 
-        <div className="relative z-20 flex w-full items-end justify-between px-4 pb-5 xs:px-6 xs:pb-6 sm:px-8 sm:pb-8 md:px-10 md:pb-10 pointer-events-none">
+        <div className="flex items-end justify-between px-6 pb-7 sm:pb-8 md:px-10 md:pb-10">
           <FadeIn
             delay={0.35}
             y={20}
             as="div"
-            className="w-full text-center sm:text-left sm:w-auto sm:max-w-[320px] md:max-w-[380px] lg:max-w-[420px] pointer-events-auto"
+            className="max-w-[240px] sm:max-w-[320px] md:max-w-[400px]"
           >
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA] xs:mb-1.5 xs:text-xs sm:text-sm">
+            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#D7E2EA] sm:text-sm">
               AI ENGINEER / BACKEND DEVELOPER
             </p>
             <p
-              className="mx-auto max-w-[320px] font-light uppercase leading-snug tracking-wide text-[#D7E2EA] sm:mx-0 sm:max-w-none"
-              style={{ fontSize: 'clamp(0.72rem, 1.25vw, 1.35rem)' }}
+              className="font-light uppercase leading-snug tracking-wide text-[#D7E2EA]"
+              style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}
             >
               I BUILD AI SYSTEMS, BREAK THINGS, FIX THEM, AND THEN BUILD SOMETHING ELSE.
             </p>
-            <p className="mx-auto mt-1.5 max-w-[300px] text-[10px] font-light text-[#D7E2EA]/70 xs:mt-2 xs:text-xs sm:mx-0 sm:max-w-none sm:text-sm">
+            <p className="mt-3 text-xs font-light text-[#D7E2EA]/70 sm:text-sm">
               Mostly interested in the space where AI, software and good ideas collide.
             </p>
           </FadeIn>
+
+
         </div>
       </div>
     </section>

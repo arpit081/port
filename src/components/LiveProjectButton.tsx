@@ -7,7 +7,7 @@ export default function LiveProjectButton({
 }: LiveProjectButtonProps) {
   return (
     <button
-      className={`rounded-full border border-[#D7E2EA] sm:border-2 font-medium uppercase tracking-wider text-[#D7E2EA] transition-colors hover:bg-[#D7E2EA]/10 ${className ? className : 'px-6 py-2.5 text-xs sm:px-8 sm:py-3 sm:text-sm'}`}
+      className={`rounded-full border-2 border-[#D7E2EA] px-8 py-3 text-sm font-medium uppercase tracking-widest text-[#D7E2EA] transition-colors hover:bg-[#D7E2EA]/10 sm:px-10 sm:py-3.5 sm:text-base ${className}`}
     >
       View Project
     </button>

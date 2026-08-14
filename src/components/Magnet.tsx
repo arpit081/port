@@ -22,11 +22,6 @@ export default function Magnet({
   const [transition, setTransition] = useState(inactiveTransition);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    // Disable magnet on touch screens to avoid janky gesture interactions
-    if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
-      return;
-    }
-
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
