@@ -84,18 +84,22 @@ function ProjectCard({
     requestAnimationFrame(measure);
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
-  }, []);
+  }, [containerRef]);
 
   /* ---- JS‑driven sticky: replaces CSS position:sticky ---- */
-  const targetTopVh = 9 + index * 2; // card 0→9vh, 1→11vh, 2→13vh
   const { scrollY } = useScroll();
 
   const y = useTransform(scrollY, (latest) => {
     const pageTop = cardPageTop.current;
     if (!pageTop || !containerPageBottom.current) return 0;
 
+    const isSmall = typeof window !== 'undefined' && window.innerWidth < 640;
+    const baseVh = isSmall ? 5 : 8;
+    const stepVh = isSmall ? 1.5 : 2;
+    const targetTopVh = baseVh + index * stepVh;
+
     const totalCards = projects.length;
-    const lastCardTargetVh = 9 + (totalCards - 1) * 2;
+    const lastCardTargetVh = baseVh + (totalCards - 1) * stepVh;
     const lastCardTargetPx = (lastCardTargetVh / 100) * window.innerHeight;
     
     // The exact scrollY where the LAST card hits the bottom of the container
@@ -136,7 +140,7 @@ function ProjectCard({
   return (
     <motion.article
       ref={cardRef}
-      className="relative flex h-[80vh] flex-col overflow-hidden rounded-[40px] border-2 border-[#D7E2EA] bg-[#0C0C0C] p-4 sm:rounded-[50px] sm:p-6 md:rounded-[60px] md:p-8"
+      className="relative flex h-[76dvh] min-h-[480px] max-h-[820px] flex-col overflow-hidden rounded-[28px] border-2 border-[#D7E2EA] bg-[#0C0C0C] p-3.5 xs:rounded-[36px] xs:p-5 sm:min-h-[560px] sm:rounded-[48px] sm:p-7 md:rounded-[56px] md:p-8"
       style={{
         y,
         scale,
@@ -145,23 +149,47 @@ function ProjectCard({
         willChange: 'transform',
       }}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-4 sm:gap-8">
-          <span className="font-black leading-none text-[#D7E2EA]" style={{ fontSize: 'clamp(3rem, 10vw, 140px)' }}>{project.number}</span>
-          <div className="pt-2 sm:pt-5">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#D7E2EA]/60 sm:text-sm">{project.category}</p>
-            <h3 className="mt-1 max-w-[320px] text-lg font-medium uppercase leading-tight text-[#D7E2EA] sm:max-w-none sm:text-2xl md:text-3xl">{project.name}</h3>
-            <p className="mt-2 hidden max-w-[400px] text-sm text-[#D7E2EA]/80 sm:block">{project.description}</p>
+      <div className="flex items-start justify-between gap-2.5 xs:gap-4">
+        <div className="flex items-start gap-2.5 xs:gap-4 sm:gap-7">
+          <span
+            className="shrink-0 font-black leading-none text-[#D7E2EA]"
+            style={{ fontSize: 'clamp(2rem, 7vw, 120px)' }}
+          >
+            {project.number}
+          </span>
+          <div className="pt-1 xs:pt-1.5 sm:pt-4">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-[#D7E2EA]/60 xs:text-xs sm:text-sm">
+              {project.category}
+            </p>
+            <h3 className="mt-0.5 text-sm font-medium uppercase leading-tight text-[#D7E2EA] xs:text-base sm:text-2xl md:text-3xl">
+              {project.name}
+            </h3>
+            <p className="mt-1 line-clamp-2 max-w-[450px] text-xs font-light text-[#D7E2EA]/75 sm:line-clamp-none sm:text-sm">
+              {project.description}
+            </p>
           </div>
         </div>
-        <LiveProjectButton className="shrink-0 px-4 py-2 text-[10px] sm:px-6 sm:py-2.5 sm:text-xs md:px-8 md:py-3 md:text-sm" />
+        <LiveProjectButton className="shrink-0 px-3 py-1.5 text-[9px] xs:px-4 xs:py-2 xs:text-[10px] sm:px-6 sm:py-2.5 sm:text-xs md:px-8 md:py-3 md:text-sm" />
       </div>
-      <div className="mt-5 grid min-h-0 flex-1 grid-cols-[40%_60%] gap-2 sm:mt-8 sm:gap-3">
-        <div className="flex min-h-0 flex-col gap-2 sm:gap-3">
-          <img src={project.images[0]} alt={`${project.name} detail`} className="min-h-0 w-full flex-1 object-cover rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
-          <img src={project.images[1]} alt={`${project.name} detail`} className="min-h-0 w-full flex-[1.35] object-cover rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
+
+      <div className="mt-3 grid min-h-0 flex-1 grid-cols-[38%_62%] gap-2 xs:mt-4 xs:gap-2.5 sm:mt-6 sm:grid-cols-[40%_60%] sm:gap-3">
+        <div className="flex min-h-0 flex-col gap-2 xs:gap-2.5 sm:gap-3">
+          <img
+            src={project.images[0]}
+            alt={`${project.name} detail 1`}
+            className="min-h-0 w-full flex-1 rounded-[16px] object-cover xs:rounded-[22px] sm:rounded-[36px] md:rounded-[44px]"
+          />
+          <img
+            src={project.images[1]}
+            alt={`${project.name} detail 2`}
+            className="min-h-0 w-full flex-[1.35] rounded-[16px] object-cover xs:rounded-[22px] sm:rounded-[36px] md:rounded-[44px]"
+          />
         </div>
-        <img src={project.images[2]} alt={`${project.name} showcase`} className="h-full min-h-0 w-full object-cover rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
+        <img
+          src={project.images[2]}
+          alt={`${project.name} showcase`}
+          className="h-full min-h-0 w-full rounded-[16px] object-cover xs:rounded-[22px] sm:rounded-[36px] md:rounded-[44px]"
+        />
       </div>
     </motion.article>
   );
@@ -173,21 +201,24 @@ export default function ProjectsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section id="projects" className="relative z-10 -mt-10 rounded-t-[40px] bg-[#0C0C0C] px-5 pt-20 pb-24 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 sm:pt-24 sm:pb-32 md:-mt-14 md:rounded-t-[60px] md:px-10 md:pt-32 md:pb-40">
+    <section
+      id="projects"
+      className="relative z-10 -mt-8 rounded-t-[32px] bg-[#0C0C0C] px-4 pt-16 pb-20 xs:-mt-10 xs:rounded-t-[40px] xs:px-6 xs:pt-20 xs:pb-24 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 sm:pt-24 sm:pb-32 md:-mt-14 md:rounded-t-[60px] md:px-10 md:pt-32 md:pb-40"
+    >
       <FadeIn
         y={40}
         as="h2"
-        className="hero-heading mb-8 text-center font-black uppercase leading-none tracking-tight sm:mb-10 md:mb-14"
-        style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
+        className="hero-heading mb-6 text-center font-black uppercase leading-none tracking-tight sm:mb-8 md:mb-12"
+        style={{ fontSize: 'clamp(2.4rem, 9.5vw, 150px)' }}
       >
         THINGS I MADE
       </FadeIn>
-      <FadeIn y={30} delay={0.2} className="mx-auto mb-16 max-w-2xl text-center sm:mb-20 md:mb-24">
-        <p className="text-sm font-light leading-relaxed text-[#D7E2EA]/70 sm:text-base md:text-lg">
-          Some started with a problem. Some started with "this would be cool." A few started with absolutely no good reason. Either way, I built them.
+      <FadeIn y={30} delay={0.2} className="mx-auto mb-12 max-w-2xl text-center sm:mb-16 md:mb-20">
+        <p className="text-xs font-light leading-relaxed text-[#D7E2EA]/70 xs:text-sm sm:text-base md:text-lg">
+          Some started with a problem. Some started with &quot;this would be cool.&quot; A few started with absolutely no good reason. Either way, I built them.
         </p>
       </FadeIn>
-      <div ref={containerRef} className="mx-auto flex max-w-6xl flex-col gap-[10vh] pb-[15vh]">
+      <div ref={containerRef} className="mx-auto flex max-w-6xl flex-col gap-[8vh] pb-[12vh] sm:gap-[10vh] sm:pb-[15vh]">
         {projects.map((project, index) => (
           <ProjectCard key={project.number} project={project} index={index} containerRef={containerRef} />
         ))}

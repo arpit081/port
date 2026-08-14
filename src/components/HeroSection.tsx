@@ -48,16 +48,20 @@ export default function HeroSection() {
 
   return (
     <section
-      className="flex h-screen flex-col"
-      style={{ overflowX: 'clip' }}
+      className="relative flex h-[100dvh] min-h-[560px] max-h-[1400px] flex-col overflow-hidden"
     >
-      <FadeIn delay={0} y={-20} as="nav" className="flex justify-between px-6 pt-6 md:px-10 md:pt-8">
+      <FadeIn
+        delay={0}
+        y={-20}
+        as="nav"
+        className="flex items-center justify-between gap-1.5 px-4 pt-4 xs:gap-2 xs:px-6 xs:pt-6 sm:px-8 md:px-10 md:pt-8"
+      >
         {navLinks.map((link) => (
           <a
             key={link.label}
             href={link.href}
             onClick={(e) => handleScroll(e, link.href)}
-            className="group text-xs sm:text-sm font-medium uppercase tracking-wider text-[#D7E2EA] md:text-lg lg:text-[1.4rem]"
+            className="group shrink-0 text-[9px] font-medium uppercase tracking-wider text-[#D7E2EA] xs:text-[11px] sm:text-xs md:text-sm lg:text-base xl:text-[1.25rem] 2xl:text-[1.35rem]"
           >
             <span className="relative inline-block transition-transform duration-300 ease-out group-hover:scale-[1.07] origin-center">
               {link.hoverLabel ? (
@@ -82,22 +86,22 @@ export default function HeroSection() {
         ))}
       </FadeIn>
 
-      <div className="relative flex flex-1 flex-col">
-        <div className="flex flex-1 items-center justify-center overflow-hidden">
+      <div className="relative flex flex-1 flex-col justify-between">
+        <div className="flex flex-1 items-center justify-center overflow-hidden px-2">
           <FadeIn
             delay={0.15}
             y={40}
             as="h1"
-            className="hero-heading w-full whitespace-nowrap text-center text-[14vw] font-black uppercase leading-none tracking-tight sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw]"
+            className="hero-heading w-full select-none whitespace-nowrap text-center text-[14vw] font-black uppercase leading-none tracking-tight sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw]"
           >
             Hi, i&apos;m arpit
           </FadeIn>
         </div>
 
-        <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 sm:bottom-0 sm:top-auto sm:translate-y-0">
+        <div className="absolute bottom-0 left-1/2 z-10 -translate-x-1/2 pointer-events-none sm:pointer-events-auto">
           <FadeIn delay={0.6} y={30}>
             <Magnet
-              padding={150}
+              padding={120}
               strength={3}
               activeTransition="transform 0.3s ease-out"
               inactiveTransition="transform 0.6s ease-in-out"
@@ -105,7 +109,7 @@ export default function HeroSection() {
               <img
                 src={mascotImg}
                 alt="Arpit portrait"
-                className="w-[280px] select-none object-contain sm:w-[360px] md:w-[440px] lg:w-[520px]"
+                className="w-[min(240px,58vw)] xs:w-[270px] sm:w-[350px] md:w-[420px] lg:w-[490px] xl:w-[540px] 2xl:w-[580px] max-h-[50dvh] sm:max-h-[60dvh] select-none object-contain pointer-events-auto"
                 draggable={false}
               />
             </Magnet>
@@ -117,28 +121,26 @@ export default function HeroSection() {
           <MusicPlayer />
         </div>
 
-        <div className="flex items-end justify-between px-6 pb-7 sm:pb-8 md:px-10 md:pb-10">
+        <div className="relative z-20 flex items-end justify-between px-4 pb-5 xs:px-6 xs:pb-6 sm:px-8 sm:pb-8 md:px-10 md:pb-10 pointer-events-none">
           <FadeIn
             delay={0.35}
             y={20}
             as="div"
-            className="max-w-[240px] sm:max-w-[320px] md:max-w-[400px]"
+            className="max-w-[200px] xs:max-w-[240px] sm:max-w-[320px] md:max-w-[380px] lg:max-w-[420px] pointer-events-auto"
           >
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#D7E2EA] sm:text-sm">
+            <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#D7E2EA] xs:mb-2 xs:text-xs sm:text-sm">
               AI ENGINEER / BACKEND DEVELOPER
             </p>
             <p
               className="font-light uppercase leading-snug tracking-wide text-[#D7E2EA]"
-              style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}
+              style={{ fontSize: 'clamp(0.72rem, 1.25vw, 1.35rem)' }}
             >
               I BUILD AI SYSTEMS, BREAK THINGS, FIX THEM, AND THEN BUILD SOMETHING ELSE.
             </p>
-            <p className="mt-3 text-xs font-light text-[#D7E2EA]/70 sm:text-sm">
+            <p className="mt-2 text-[10px] font-light text-[#D7E2EA]/70 xs:mt-3 xs:text-xs sm:text-sm">
               Mostly interested in the space where AI, software and good ideas collide.
             </p>
           </FadeIn>
-
-
         </div>
       </div>
     </section>

@@ -125,15 +125,29 @@ export default function MusicPlayer() {
             {isOpen ? (
               <motion.div
                 key="expanded-content"
-                className="music-card-content absolute inset-0 z-10"
+                className="music-card-content absolute inset-0 z-10 p-5 sm:p-6 flex flex-col justify-between"
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 5, transition: { duration: 0.15 } }}
                 transition={{ duration: 0.3, delay: 0.05 }}
               >
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-[10px] font-bold tracking-widest uppercase text-white/50">NOW PLAYING</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsOpen(false);
+                    }}
+                    aria-label="Close music player"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                  >
+                    <X size={15} />
+                  </button>
+                </div>
+
                 {currentTrack.artworkUrl && (
                   <motion.div 
-                    className="artwork-container w-[192px] mx-auto aspect-square mt-6 mb-0"
+                    className="artwork-container w-[160px] xs:w-[180px] sm:w-[192px] mx-auto aspect-square my-auto"
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
@@ -141,14 +155,14 @@ export default function MusicPlayer() {
                     <img
                       src={currentTrack.artworkUrl}
                       alt="Album Art"
-                      className="w-full h-full object-cover rounded-3xl shadow-[0_8px_24px_rgba(0,0,0,0.5)] pointer-events-none"
+                      className="w-full h-full object-cover rounded-2xl sm:rounded-3xl shadow-[0_8px_24px_rgba(0,0,0,0.5)] pointer-events-none"
                     />
                   </motion.div>
                 )}
 
-                <div className="music-info mt-auto">
-                  <h3 className="song-title">{currentTrack.title}</h3>
-                  <p className="artist-name">{currentTrack.artist}</p>
+                <div className="music-info mt-2 sm:mt-auto">
+                  <h3 className="song-title text-lg sm:text-xl font-bold">{currentTrack.title}</h3>
+                  <p className="artist-name text-xs sm:text-sm text-white/70">{currentTrack.artist}</p>
                 </div>
 
                 <div className="playback-controls">
