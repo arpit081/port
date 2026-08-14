@@ -1,6 +1,6 @@
 import FadeIn from './FadeIn';
 import AnimatedText from './AnimatedText';
-import ContactButton from './ContactButton';
+
 
 const aboutText =
   "I'm Arpit — I like taking random ideas and seeing how far I can take them.\n\nMost of what I build sits somewhere around AI, software and backend systems. I like figuring out how things work, trying things that probably shouldn't work, and occasionally ending up with something surprisingly useful.\n\nI tend to go down very specific rabbit holes. Sometimes they turn into projects. Sometimes they just leave me with a new thing to obsess over.";
@@ -67,9 +67,7 @@ export default function AboutSection() {
       </div>
 
       <div className="mt-16 sm:mt-20 md:mt-24">
-        <FadeIn delay={0.2} y={30}>
-          <ContactButton />
-        </FadeIn>
+
       </div>
     </section>
   );

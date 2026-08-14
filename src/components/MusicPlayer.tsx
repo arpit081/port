@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, SkipBack, SkipForward, X, Pause } from 'lucide-react';
+import { Play, SkipBack, SkipForward, X, Pause, Volume2, Volume1, VolumeX } from 'lucide-react';
 import { useMusicPlayer } from '../context/MusicPlayerContext';
 
 const SPRING = {
@@ -31,12 +31,17 @@ export default function MusicPlayer() {
     isOpen, setIsOpen,
     isPlaying, setIsPlaying,
     progress, currentTime, duration,
-    currentTrack, nextTrack, prevTrack, seek
+    currentTrack, nextTrack, prevTrack, seek,
+    volume, setVolume
   } = useMusicPlayer();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLightMode, setIsLightMode] = useState(false);
+  const [isVolumeOpen, setIsVolumeOpen] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
+  const previousVolumeRef = useRef<number>(1);
+
+
 
   useEffect(() => {
     const aboutEl = document.getElementById('about');
@@ -72,7 +77,6 @@ export default function MusicPlayer() {
   const isPill = !isOpen && isScrolled;
   const isHero = !isOpen && !isScrolled;
 
-  // We toggle classNames dynamically so Framer Motion morphs between them
   let containerClassName = "music-player-unified";
   if (isScrolled) {
     containerClassName += " is-fixed";
@@ -117,7 +121,6 @@ export default function MusicPlayer() {
         }}
       >
         <div className="music-player-clip">
-
           <AnimatePresence mode="wait">
             {isOpen ? (
               <motion.div
@@ -182,9 +185,27 @@ export default function MusicPlayer() {
                     >
                       <SkipForward size={22} fill={iconMuted} stroke="none" />
                     </button>
+
+                    <button 
+                      className="control-btn volume-btn"
+                      onClick={(e) => { 
+                        e.stopPropagation();
+                        if (volume > 0) {
+                          previousVolumeRef.current = volume;
+                          setVolume(0);
+                        } else {
+                          setVolume(previousVolumeRef.current || 1);
+                        }
+                      }}
+                    >
+                      {volume === 0 ? <VolumeX size={20} color={iconColor} strokeWidth={2} /> : 
+                       volume < 0.5 ? <Volume1 size={20} color={iconColor} strokeWidth={2} /> : 
+                       <Volume2 size={20} color={iconColor} strokeWidth={2} />}
+                    </button>
                   </div>
                 </div>
-              </motion.div>
+
+                </motion.div>
             ) : isPill ? (
               <motion.div
                 key="pill-content"
@@ -257,6 +278,8 @@ export default function MusicPlayer() {
             )}
           </AnimatePresence>
         </div>
+
+
       </motion.div>
     </>
   );

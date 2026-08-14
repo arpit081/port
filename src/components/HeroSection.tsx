@@ -1,6 +1,5 @@
 import FadeIn from './FadeIn';
 import Magnet from './Magnet';
-import ContactButton from './ContactButton';
 import MusicPlayer from './MusicPlayer';
 
 import mascotImg from '../assets/mascot.png';
@@ -139,9 +138,7 @@ export default function HeroSection() {
             </p>
           </FadeIn>
 
-          <FadeIn delay={0.5} y={20}>
-            <ContactButton />
-          </FadeIn>
+
         </div>
       </div>
     </section>

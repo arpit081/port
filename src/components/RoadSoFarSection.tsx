@@ -16,7 +16,7 @@ export default function RoadSoFarSection() {
       >
         ROAD SO FAR
       </FadeIn>
-      
+
       <FadeIn y={30} delay={0.2} className="mx-auto mb-16 max-w-2xl text-center sm:mb-20 md:mb-24">
         <p className="text-sm font-light leading-relaxed text-[#0C0C0C]/70 sm:text-base md:text-lg">
           I've spent the last few years jumping between things I wanted to understand, things I wanted to build, and places where I got to learn by actually doing. Some of those steps had company names attached to them. Some didn't. And I'm still figuring out what's next.
@@ -86,7 +86,7 @@ export default function RoadSoFarSection() {
                     <p>And honestly, I think that's the point.</p>
                   </div>
                 </div>
-                
+
                 <div className="relative shrink-0 lg:ml-8 lg:mr-4">
                   {/* Invisible placeholder to prevent flex reflow when card is absolute */}
                   <div className="invisible pointer-events-none opacity-0">
@@ -97,25 +97,23 @@ export default function RoadSoFarSection() {
                     </div>
                   </div>
 
-                  <motion.div 
+                  <motion.div
                     layout
                     initial={false}
                     transition={{
                       layout: { type: "spring", stiffness: 300, damping: 24, mass: 1 },
                       default: { duration: 0.3 }
                     }}
-                    className={`absolute left-0 bottom-0 z-50 flex origin-bottom-left flex-col overflow-hidden lg:left-auto lg:right-0 lg:origin-bottom-right transition-colors duration-300 ${
-                      isExpanded 
-                        ? 'w-[calc(100vw-40px)] max-w-2xl cursor-default rounded-[30px] skills-glass-panel p-8 sm:p-10 lg:w-[480px] xl:w-[540px]' 
-                        : 'w-[260px] h-[48px] cursor-pointer items-center justify-center rounded-full skills-glass-pill bg-black/[0.04] px-6 py-3.5 hover:bg-black/[0.06] sm:px-8 sm:py-4'
-                    }`}
+                    className={`absolute left-0 bottom-0 z-50 flex origin-bottom-left flex-col overflow-hidden lg:left-auto lg:right-0 lg:origin-bottom-right transition-colors duration-300 ${isExpanded
+                      ? 'w-[calc(100vw-40px)] max-w-2xl cursor-default rounded-[30px] skills-glass-panel p-8 sm:p-10 lg:w-[480px] xl:w-[540px]'
+                      : 'w-[260px] h-[48px] cursor-pointer items-center justify-center rounded-full skills-glass-pill bg-black/[0.04] px-6 py-3.5 hover:bg-black/[0.06] sm:px-8 sm:py-4'
+                      }`}
                     onClick={() => !isExpanded && setIsExpanded(true)}
                   >
                     {/* Collapsed Content */}
-                    <motion.div 
-                      className={`flex w-full h-full items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#0C0C0C] sm:text-xs ${
-                        isExpanded ? 'absolute inset-0 pointer-events-none opacity-0' : 'relative opacity-100'
-                      }`}
+                    <motion.div
+                      className={`flex w-full h-full items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#0C0C0C] sm:text-xs ${isExpanded ? 'absolute inset-0 pointer-events-none opacity-0' : 'relative opacity-100'
+                        }`}
                       animate={{ opacity: isExpanded ? 0 : 1 }}
                       transition={{ duration: 0.2 }}
                     >
@@ -123,18 +121,17 @@ export default function RoadSoFarSection() {
                     </motion.div>
 
                     {/* Expanded Content */}
-                    <motion.div 
-                      className={`flex w-full flex-col ${
-                        isExpanded ? 'relative opacity-100' : 'absolute pointer-events-none opacity-0'
-                      }`}
+                    <motion.div
+                      className={`flex w-full flex-col ${isExpanded ? 'relative opacity-100' : 'absolute pointer-events-none opacity-0'
+                        }`}
                       initial={{ y: 10 }}
-                      animate={{ 
+                      animate={{
                         opacity: isExpanded ? 1 : 0,
                         y: isExpanded ? 0 : 10
                       }}
                       transition={{ duration: 0.3, delay: isExpanded ? 0.1 : 0 }}
                     >
-                      <button 
+                      <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -144,7 +141,7 @@ export default function RoadSoFarSection() {
                       >
                         &times;
                       </button>
-                      
+
                       <div className="mb-8 pr-10">
                         <h4 className="mb-2 text-xl font-bold uppercase tracking-tight text-[#0C0C0C]">SKILLS</h4>
                         <p className="text-sm font-light italic text-[#0C0C0C]/60">A few things I've spent way too much time figuring out.</p>
@@ -157,21 +154,21 @@ export default function RoadSoFarSection() {
                             Python &middot; FastAPI &middot; REST APIs &middot; LLM Integration &middot; RAG &middot; Neo4j &middot; Cypher
                           </p>
                         </div>
-                        
+
                         <div>
                           <h5 className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[#0C0C0C]/80">AI / ML / NLP</h5>
                           <p className="text-sm font-medium leading-relaxed text-[#0C0C0C]/60">
                             Intent Classification &middot; Entity Relation Extraction &middot; Knowledge Graph Modeling &middot; SPO Triple Generation &middot; Embeddings &middot; Prompt Engineering &middot; PyTorch
                           </p>
                         </div>
-                        
+
                         <div>
                           <h5 className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[#0C0C0C]/80">FRONTEND</h5>
                           <p className="text-sm font-medium leading-relaxed text-[#0C0C0C]/60">
                             React.js &middot; JavaScript &middot; HTML &middot; CSS &middot; Bootstrap
                           </p>
                         </div>
-                        
+
                         <div>
                           <h5 className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[#0C0C0C]/80">TOOLS / SYSTEMS</h5>
                           <p className="text-sm font-medium leading-relaxed text-[#0C0C0C]/60">

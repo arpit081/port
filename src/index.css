@@ -255,6 +255,7 @@ body,
   display: flex;
   flex-direction: column;
   gap: 12px;
+  position: relative;
 }
 
 .progress-bar-container {
@@ -299,6 +300,7 @@ body,
 }
 
 .control-buttons {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -316,6 +318,11 @@ body,
   opacity: 0.8;
   transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   filter: none;
+}
+
+.control-btn.volume-btn {
+  position: absolute;
+  right: 0;
 }
 
 .control-btn:hover {
@@ -338,6 +345,8 @@ body,
   background: white;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 255, 255, 0.4);
 }
+
+
 
 /* ═══════════════════════════════════════
    Liquid Glass Pill — Persistent Mini-Player

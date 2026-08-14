@@ -46,6 +46,8 @@ interface MusicPlayerState {
   nextTrack: () => void;
   prevTrack: () => void;
   seek: (progress: number) => void;
+  volume: number;
+  setVolume: (v: number) => void;
 }
 
 const MusicPlayerContext = createContext<MusicPlayerState | null>(null);
@@ -57,6 +59,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [trackIndex, setTrackIndex] = useState(0);
+  const [volume, setVolume] = useState(1);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const currentTrack = TRACKS[trackIndex];
@@ -65,6 +68,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   useEffect(() => {
     const audio = new Audio();
     audioRef.current = audio;
+    audio.volume = volume;
 
     const handleTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
@@ -100,7 +104,14 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
       audio.pause();
       audioRef.current = null;
     };
-  }, []);
+  }, []); // Intentionally omit volume from deps so it doesn't re-create audio element
+
+  // Update volume when it changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
 
   // Update audio source when track changes
   useEffect(() => {
@@ -152,7 +163,8 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
       isOpen, setIsOpen,
       isPlaying, setIsPlaying,
       progress, currentTime, duration,
-      currentTrack, nextTrack, prevTrack, seek
+      currentTrack, nextTrack, prevTrack, seek,
+      volume, setVolume
     }}>
       {children}
     </MusicPlayerContext.Provider>
