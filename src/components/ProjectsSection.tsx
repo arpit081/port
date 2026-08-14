@@ -67,6 +67,8 @@ function ProjectCard({
 }) {
   const cardRef = useRef<HTMLElement>(null);
   const cardPageTop = useRef(0);
+  const cardHeight = useRef(0);
+  const containerPageBottom = useRef(0);
 
   /* ---- measure layout position (unaffected by transforms) ---- */
   useEffect(() => {
@@ -74,6 +76,10 @@ function ProjectCard({
     if (!el) return;
     const measure = () => {
       cardPageTop.current = getPageTop(el);
+      cardHeight.current = el.offsetHeight;
+      if (containerRef.current) {
+        containerPageBottom.current = getPageTop(containerRef.current) + containerRef.current.offsetHeight;
+      }
     };
     requestAnimationFrame(measure);
     window.addEventListener('resize', measure);
@@ -86,13 +92,24 @@ function ProjectCard({
 
   const y = useTransform(scrollY, (latest) => {
     const pageTop = cardPageTop.current;
-    if (!pageTop) return 0;
+    if (!pageTop || !containerPageBottom.current) return 0;
+
+    const totalCards = projects.length;
+    const lastCardTargetVh = 9 + (totalCards - 1) * 2;
+    const lastCardTargetPx = (lastCardTargetVh / 100) * window.innerHeight;
+    
+    // The exact scrollY where the LAST card hits the bottom of the container
+    const maxScrollY = containerPageBottom.current - cardHeight.current - lastCardTargetPx;
+    
+    // Freeze all cards at this scroll point so they maintain their staggered layout
+    const effectiveLatest = maxScrollY > 0 ? Math.min(latest, maxScrollY) : latest;
+
     const targetPx = (targetTopVh / 100) * window.innerHeight;
-    const naturalVpTop = pageTop - latest; // where the card WOULD be without transform
+    const naturalVpTop = pageTop - effectiveLatest; 
     if (naturalVpTop <= targetPx) {
-      return targetPx - naturalVpTop; // push it back down to the target position
+      return targetPx - naturalVpTop; 
     }
-    return 0; // hasn't reached target yet — stay at natural position
+    return 0; 
   });
 
   /* ---- scale animation (3D depth) ---- */
@@ -156,7 +173,7 @@ export default function ProjectsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section id="projects" className="relative z-10 -mt-10 rounded-t-[40px] bg-[#0C0C0C] px-5 pt-20 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 sm:pt-24 md:-mt-14 md:rounded-t-[60px] md:px-10 md:pt-32">
+    <section id="projects" className="relative z-10 -mt-10 rounded-t-[40px] bg-[#0C0C0C] px-5 pt-20 pb-24 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 sm:pt-24 sm:pb-32 md:-mt-14 md:rounded-t-[60px] md:px-10 md:pt-32 md:pb-40">
       <FadeIn
         y={40}
         as="h2"

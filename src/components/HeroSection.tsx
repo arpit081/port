@@ -5,9 +5,48 @@ import MusicPlayer from './MusicPlayer';
 
 import mascotImg from '../assets/mascot.png';
 
-const navLinks = ['About', 'Interests', 'Projects', 'Contact'];
+const navLinks = [
+  { label: 'WHO AM I', href: '#about' },
+  { label: 'ROAD SO FAR', hoverLabel: 'SKILLS', href: '#road-so-far' },
+  { label: 'THINGS I MADE', href: '#projects' },
+  { label: 'OUTSIDE THE CODE', href: '#interests' },
+  { label: 'SAY HELLO', href: '#contact' },
+];
 
 export default function HeroSection() {
+  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace('#', '');
+    const targetElement = document.getElementById(targetId);
+    
+    if (targetElement) {
+      const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+      const startPosition = window.scrollY;
+      const distance = targetPosition - startPosition;
+      const duration = 800; // 800ms duration
+      let start: number | null = null;
+
+      // easeInOutCubic for a premium feel
+      const easeInOutCubic = (t: number) => {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      };
+
+      const step = (timestamp: number) => {
+        if (!start) start = timestamp;
+        const progress = timestamp - start;
+        const percent = Math.min(progress / duration, 1);
+        
+        window.scrollTo(0, startPosition + distance * easeInOutCubic(percent));
+        
+        if (progress < duration) {
+          window.requestAnimationFrame(step);
+        }
+      };
+
+      window.requestAnimationFrame(step);
+    }
+  };
+
   return (
     <section
       className="flex h-screen flex-col"
@@ -16,11 +55,30 @@ export default function HeroSection() {
       <FadeIn delay={0} y={-20} as="nav" className="flex justify-between px-6 pt-6 md:px-10 md:pt-8">
         {navLinks.map((link) => (
           <a
-            key={link}
-            href={`#${link.toLowerCase()}`}
-            className="text-sm font-medium uppercase tracking-wider text-[#D7E2EA] transition-opacity duration-200 hover:opacity-70 md:text-lg lg:text-[1.4rem]"
+            key={link.label}
+            href={link.href}
+            onClick={(e) => handleScroll(e, link.href)}
+            className="group text-xs sm:text-sm font-medium uppercase tracking-wider text-[#D7E2EA] md:text-lg lg:text-[1.4rem]"
           >
-            {link}
+            <span className="relative inline-block transition-transform duration-300 ease-out group-hover:scale-[1.07] origin-center">
+              {link.hoverLabel ? (
+                <>
+                  <span className="invisible whitespace-nowrap">
+                    {link.label.length > link.hoverLabel.length ? link.label : link.hoverLabel}
+                  </span>
+                  <span className="absolute inset-0 flex items-center justify-start opacity-100 transition-all duration-300 ease-out group-hover:-translate-y-2 group-hover:opacity-0">
+                    {link.label}
+                  </span>
+                  <span className="absolute inset-0 flex items-center justify-start translate-y-2 opacity-0 transition-all duration-300 ease-out group-hover:translate-y-0 group-hover:opacity-100 text-white">
+                    {link.hoverLabel}
+                  </span>
+                </>
+              ) : (
+                <span className="transition-opacity duration-300 group-hover:opacity-70">
+                  {link.label}
+                </span>
+              )}
+            </span>
           </a>
         ))}
       </FadeIn>

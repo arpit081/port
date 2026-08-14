@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import Lenis from 'lenis';
 import HeroSection from '@/components/HeroSection';
 import AboutSection from '@/components/AboutSection';
-import ServicesSection from '@/components/ServicesSection';
+import RoadSoFarSection from '@/components/RoadSoFarSection';
 import ProjectsSection from '@/components/ProjectsSection';
+import ServicesSection from '@/components/ServicesSection';
 import { MusicPlayerProvider } from '@/context/MusicPlayerContext';
 
 function App() {
@@ -32,8 +33,9 @@ function App() {
       <main className="min-h-screen overflow-x-clip bg-[#0C0C0C]">
         <HeroSection />
         <AboutSection />
-        <ServicesSection />
+        <RoadSoFarSection />
         <ProjectsSection />
+        <ServicesSection />
       </main>
     </MusicPlayerProvider>
   );
