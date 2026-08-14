@@ -3,7 +3,7 @@ import AnimatedText from './AnimatedText';
 import ContactButton from './ContactButton';
 
 const aboutText =
-  "I'M ARPIT — AN AI ENGINEER WHO LIKES TURNING RANDOM IDEAS INTO THINGS THAT ACTUALLY WORK.\n\nI BUILD INTELLIGENT APPLICATIONS AROUND LLMS, BACKEND SYSTEMS, RAG PIPELINES AND KNOWLEDGE GRAPHS, WHILE CONSTANTLY EXPERIMENTING WITH NEW TECHNOLOGIES AND IDEAS.\n\nFROM BUILDING AN LLM-POWERED CHATBOT AND KNOWLEDGE GRAPH SYSTEM AT NIC TO CREATING AN AI-POWERED EXCEL AUTOMATION TOOL, I ENJOY WORKING AT THE INTERSECTION OF AI, SOFTWARE AND EXPERIMENTATION.";
+  "I'm Arpit — I like taking random ideas and seeing how far I can take them.\n\nMost of what I build sits somewhere around AI, software and backend systems. I like figuring out how things work, trying things that probably shouldn't work, and occasionally ending up with something surprisingly useful.\n\nI tend to go down very specific rabbit holes. Sometimes they turn into projects. Sometimes they just leave me with a new thing to obsess over.";
 
 export default function AboutSection() {
   return (
@@ -55,7 +55,7 @@ export default function AboutSection() {
           className="hero-heading text-center font-black uppercase leading-none tracking-tight"
           style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
         >
-          About me
+          SO, WHO AM I?
         </FadeIn>
 
         <AnimatedText

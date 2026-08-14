@@ -65,7 +65,7 @@ export default function HeroSection() {
             delay={0.35}
             y={20}
             as="div"
-            className="max-w-[160px] sm:max-w-[220px] md:max-w-[260px]"
+            className="max-w-[240px] sm:max-w-[320px] md:max-w-[400px]"
           >
             <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#D7E2EA] sm:text-sm">
               AI ENGINEER / BACKEND DEVELOPER
@@ -74,7 +74,10 @@ export default function HeroSection() {
               className="font-light uppercase leading-snug tracking-wide text-[#D7E2EA]"
               style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}
             >
-              AI ENGINEER DRIVEN BY BUILDING SYSTEMS THAT TURN DATA INTO INTELLIGENCE.
+              I BUILD AI SYSTEMS, BREAK THINGS, FIX THEM, AND THEN BUILD SOMETHING ELSE.
+            </p>
+            <p className="mt-3 text-xs font-light text-[#D7E2EA]/70 sm:text-sm">
+              Mostly interested in the space where AI, software and good ideas collide.
             </p>
           </FadeIn>
 

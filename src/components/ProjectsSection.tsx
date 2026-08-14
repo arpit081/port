@@ -10,7 +10,7 @@ const projects: Project[] = [
     number: '01', 
     category: 'NIC PROJECT', 
     name: 'AI CHATBOT SYSTEM', 
-    description: 'An LLM-powered intelligent chatbot built around RAG, intent classification, dynamic Cypher generation and a Neo4j knowledge graph.',
+    description: 'An intelligent chatbot that actually understands intent. Built with LLMs, RAG, and a Neo4j knowledge graph that generates Cypher queries on the fly.',
     images: [
       'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055344_5eff02e0-87a5-41ce-b64f-eb08da8f33db.png&w=1280&q=85',
       'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055431_11d841fd-8b41-46a5-82e4-b04f2407a7d8.png&w=1280&q=85',
@@ -21,7 +21,7 @@ const projects: Project[] = [
     number: '02', 
     category: 'PERSONAL PROJECT', 
     name: 'AI-POWERED EXCEL REPORT GENERATOR', 
-    description: 'An AI-powered application that transforms natural-language input into structured Excel reports using LLM-based data extraction.',
+    description: 'Because writing Excel reports manually is terrible. You just type what you want in plain English, and an LLM extracts the data to build the structured report for you.',
     images: [
       'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055654_911201c5-36d9-4bc6-bac7-331adfce159f.png&w=1280&q=85',
       'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055723_5ceda0b8-d9c2-4665-b2e3-83ba19ba76d1.png&w=1280&q=85',
@@ -32,7 +32,7 @@ const projects: Project[] = [
     number: '03', 
     category: 'PERSONAL PROJECT', 
     name: 'AI HOVER MOUSE', 
-    description: 'A real-time hand-gesture mouse controller built with Python, OpenCV and MediaPipe.',
+    description: 'A mouse you control with your hands. Because apparently using a mouse normally wasn\'t interesting enough. Built in real-time with Python, OpenCV and MediaPipe.',
     images: [
       'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055759_963cfb0b-4bd1-4b0f-9d0a-09bd6cf95b2f.png&w=1280&q=85',
       'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_060108_438f781a-9846-4dcc-89ab-c4e6cb830f5b.png&w=1280&q=85',
@@ -160,10 +160,15 @@ export default function ProjectsSection() {
       <FadeIn
         y={40}
         as="h2"
-        className="hero-heading mb-16 text-center font-black uppercase leading-none tracking-tight sm:mb-20 md:mb-28"
+        className="hero-heading mb-8 text-center font-black uppercase leading-none tracking-tight sm:mb-10 md:mb-14"
         style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
       >
-        Project
+        THINGS I MADE
+      </FadeIn>
+      <FadeIn y={30} delay={0.2} className="mx-auto mb-16 max-w-2xl text-center sm:mb-20 md:mb-24">
+        <p className="text-sm font-light leading-relaxed text-[#D7E2EA]/70 sm:text-base md:text-lg">
+          Some started with a problem. Some started with "this would be cool." A few started with absolutely no good reason. Either way, I built them.
+        </p>
       </FadeIn>
       <div ref={containerRef} className="mx-auto flex max-w-6xl flex-col gap-[10vh] pb-[15vh]">
         {projects.map((project, index) => (

@@ -1,11 +1,11 @@
 import FadeIn from './FadeIn';
 
 const services = [
-  ['01', 'MUSIC', 'Songs, artists and sounds that have somehow become part of my everyday life.'],
+  ['01', 'MUSIC', 'Songs, artists and sounds that somehow became part of my everyday life.'],
   ['02', 'GAMING', 'Competitive games, open worlds and the occasional obsession that takes way too many hours.'],
   ['03', 'ANIME', 'Stories, characters and worlds that I keep coming back to.'],
-  ['04', 'TECHNOLOGY', "AI, weird experiments, new tools and anything that makes me think, 'wait... can I build that?'"],
-  ['05', 'BUILDING THINGS', "Side projects, experiments and random ideas that start as 'this would be cool' and somehow become actual projects."],
+  ['04', 'TECHNOLOGY', "New tools, weird experiments and anything that makes me think, 'wait... can I build that?'"],
+  ['05', 'BUILDING THINGS', "Side projects, experiments and random ideas that somehow become actual projects."],
 ];
 
 export default function ServicesSection() {
@@ -17,7 +17,7 @@ export default function ServicesSection() {
         className="mb-16 text-center font-black uppercase leading-none tracking-tight text-[#0C0C0C] sm:mb-20 md:mb-28"
         style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
       >
-        Interests
+        OUTSIDE THE CODE
       </FadeIn>
       <div className="mx-auto max-w-5xl">
         {services.map(([number, name, description], index) => (
