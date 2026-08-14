@@ -1,6 +1,7 @@
 import FadeIn from './FadeIn';
 import Magnet from './Magnet';
 import ContactButton from './ContactButton';
+import MusicPlayer from './MusicPlayer';
 
 import mascotImg from '../assets/mascot.png';
 
@@ -52,6 +53,11 @@ export default function HeroSection() {
               />
             </Magnet>
           </FadeIn>
+        </div>
+
+        {/* Floating music button — sits in the empty pocket left of mascot */}
+        <div className="music-btn-anchor">
+          <MusicPlayer />
         </div>
 
         <div className="flex items-end justify-between px-6 pb-7 sm:pb-8 md:px-10 md:pb-10">

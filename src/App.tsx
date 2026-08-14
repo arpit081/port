@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import Lenis from 'lenis';
 import HeroSection from '@/components/HeroSection';
-import MarqueeSection from '@/components/MarqueeSection';
 import AboutSection from '@/components/AboutSection';
 import ServicesSection from '@/components/ServicesSection';
 import ProjectsSection from '@/components/ProjectsSection';
+import { MusicPlayerProvider } from '@/context/MusicPlayerContext';
 
 function App() {
   useEffect(() => {
@@ -28,13 +28,14 @@ function App() {
     };
   }, []);
   return (
-    <main className="min-h-screen overflow-x-clip bg-[#0C0C0C]">
-      <HeroSection />
-      <MarqueeSection />
-      <AboutSection />
-      <ServicesSection />
-      <ProjectsSection />
-    </main>
+    <MusicPlayerProvider>
+      <main className="min-h-screen overflow-x-clip bg-[#0C0C0C]">
+        <HeroSection />
+        <AboutSection />
+        <ServicesSection />
+        <ProjectsSection />
+      </main>
+    </MusicPlayerProvider>
   );
 }
 

@@ -1,4 +1,4 @@
-import { useRef, type CSSProperties, type ReactNode } from 'react';
+import { useRef, type CSSProperties } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 type AnimatedTextProps = {
