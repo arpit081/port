@@ -1,43 +1,64 @@
 import { useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import FadeIn from './FadeIn';
+import QuirkyText from './QuirkyText';
 import LiveProjectButton from './LiveProjectButton';
 
-type Project = { number: string; category: string; name: string; description: string; images: string[] };
+// Images in public/projects are designed in HTML and rendered to WebP at 2x their
+// on-card size: python scripts/project-images/gen.py, then render.py public/projects.
+// The slots change shape with the viewport, so they're shown whole (object-contain)
+// on the images' own edge colour rather than cropped.
+type ProjectImage = { src: string; alt: string };
+type Project = { number: string; category: string; name: string; description: string; images: ProjectImage[]; repo: string };
 
 const projects: Project[] = [
-  { 
-    number: '01', 
-    category: 'NIC PROJECT', 
-    name: 'AI CHATBOT SYSTEM', 
-    description: 'An intelligent chatbot that actually understands intent. Built with LLMs, RAG, and a Neo4j knowledge graph that generates Cypher queries on the fly.',
+  {
+    number: '01',
+    category: 'PERSONAL PROJECT',
+    name: 'ENTERPRISE GRAPH-RAG & AGENT SYSTEM',
+    repo: 'https://github.com/arpit081/hybrid-graph-rag-system',
+    description: 'Ask in plain English, get exact answers from a knowledge graph. A LangGraph agent writes Cypher, checks its own work before running it, and answers repeat questions from Redis in ~0.1 ms.',
     images: [
-      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055344_5eff02e0-87a5-41ce-b64f-eb08da8f33db.png&w=1280&q=85',
-      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055431_11d841fd-8b41-46a5-82e4-b04f2407a7d8.png&w=1280&q=85',
-      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055451_e317bf2d-28d4-48cc-86b0-6f72f25b6327.png&w=1280&q=85',
-    ] 
+      { src: '/projects/rag-1.webp', alt: 'Stats: 100% exact match across 36 benchmarks, 0.1 ms cached queries, 100% of mutating queries blocked' },
+      { src: '/projects/rag-2.webp', alt: 'LangGraph state machine: router, Text-to-Cypher with a self-correcting validator, document retrieval and a Redis cache shortcut' },
+      { src: '/projects/rag-3.webp', alt: 'Chat UI answering a question by generating, validating and running a read-only Cypher query' },
+    ],
   },
   { 
     number: '02', 
-    category: 'PERSONAL PROJECT', 
-    name: 'AI-POWERED EXCEL REPORT GENERATOR', 
-    description: 'Because writing Excel reports manually is terrible. You just type what you want in plain English, and an LLM extracts the data to build the structured report for you.',
+    category: 'NIC PROJECT', 
+    name: 'AI CHATBOT SYSTEM', 
+    repo: 'https://github.com/arpit081/NIC-project',
+    description: 'An intelligent chatbot that actually understands intent. Built with LLMs, RAG, and a Neo4j knowledge graph that generates Cypher queries on the fly.',
     images: [
-      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055654_911201c5-36d9-4bc6-bac7-331adfce159f.png&w=1280&q=85',
-      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055723_5ceda0b8-d9c2-4665-b2e3-83ba19ba76d1.png&w=1280&q=85',
-      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055753_adc5dcbd-a8e6-49c0-b43a-9b030d835cea.png&w=1280&q=85',
-    ] 
+      { src: '/projects/nic-1.webp', alt: 'Offline PDFs turned into Subject-Predicate-Object triples, 5,000+ in total' },
+      { src: '/projects/nic-2.webp', alt: 'Intent classification and entity extraction turning a question into a dynamic Cypher query' },
+      { src: '/projects/nic-3.webp', alt: 'Neo4j knowledge graph of Little Andaman villages and facilities, queried in natural language' },
+    ],
   },
   { 
     number: '03', 
     category: 'PERSONAL PROJECT', 
+    name: 'AI-POWERED EXCEL REPORT GENERATOR', 
+    repo: 'https://github.com/arpit081/excel-sheet-generator',
+    description: 'Because writing Excel reports manually is terrible. You just type what you want in plain English, and an LLM extracts the data to build the structured report for you.',
+    images: [
+      { src: '/projects/sheet-1.webp', alt: 'SheetAI prompt bar: describe a sheet in plain English and generate it' },
+      { src: '/projects/sheet-2.webp', alt: 'Generated .xlsx ready to download, with history and ~70% less time spent on reports' },
+      { src: '/projects/sheet-3.webp', alt: 'Generated spreadsheet of monthly sales by region with target, actual, variance and status' },
+    ],
+  },
+  { 
+    number: '04', 
+    category: 'PERSONAL PROJECT', 
     name: 'AI HOVER MOUSE', 
+    repo: 'https://github.com/arpit081/ai-hover-mouse',
     description: 'A mouse you control with your hands. Because apparently using a mouse normally wasn\'t interesting enough. Built in real-time with Python, OpenCV and MediaPipe.',
     images: [
-      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055759_963cfb0b-4bd1-4b0f-9d0a-09bd6cf95b2f.png&w=1280&q=85',
-      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_060108_438f781a-9846-4dcc-89ab-c4e6cb830f5b.png&w=1280&q=85',
-      'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055818_9d062121-ad7e-46b9-999a-1a6a692ef1ee.png&w=1280&q=85',
-    ] 
+      { src: '/projects/hover-1.webp', alt: 'Hand gestures: index finger to move, pinch to click, thumb and index spread for volume' },
+      { src: '/projects/hover-2.webp', alt: 'Stats: 95% cursor accuracy, under 50 ms latency, 40% fewer false detections, 21 landmarks' },
+      { src: '/projects/hover-3.webp', alt: 'Webcam view with 21 hand landmarks tracked and the cursor following the index fingertip' },
+    ],
   },
 ];
 
@@ -67,8 +88,7 @@ function ProjectCard({
 }) {
   const cardRef = useRef<HTMLElement>(null);
   const cardPageTop = useRef(0);
-  const cardHeight = useRef(0);
-  const containerPageBottom = useRef(0);
+  const lastCardPageTop = useRef(0);
 
   /* ---- measure layout position (unaffected by transforms) ---- */
   useEffect(() => {
@@ -76,10 +96,8 @@ function ProjectCard({
     if (!el) return;
     const measure = () => {
       cardPageTop.current = getPageTop(el);
-      cardHeight.current = el.offsetHeight;
-      if (containerRef.current) {
-        containerPageBottom.current = getPageTop(containerRef.current) + containerRef.current.offsetHeight;
-      }
+      const last = containerRef.current?.lastElementChild as HTMLElement | null | undefined;
+      if (last) lastCardPageTop.current = getPageTop(last);
     };
     requestAnimationFrame(measure);
     window.addEventListener('resize', measure);
@@ -92,15 +110,17 @@ function ProjectCard({
 
   const y = useTransform(scrollY, (latest) => {
     const pageTop = cardPageTop.current;
-    if (!pageTop || !containerPageBottom.current) return 0;
+    if (!pageTop || !lastCardPageTop.current) return 0;
 
     const totalCards = projects.length;
     const lastCardTargetVh = 9 + (totalCards - 1) * 2;
     const lastCardTargetPx = (lastCardTargetVh / 100) * window.innerHeight;
-    
-    // The exact scrollY where the LAST card hits the bottom of the container
-    const maxScrollY = containerPageBottom.current - cardHeight.current - lastCardTargetPx;
-    
+
+    // The exact scrollY where the LAST card lands in its slot. The stack
+    // releases right there, so it flows straight into scrolling away; waiting
+    // for the container's bottom padding left a dead zone where nothing moved.
+    const maxScrollY = lastCardPageTop.current - lastCardTargetPx;
+
     // Freeze all cards at this scroll point so they maintain their staggered layout
     const effectiveLatest = maxScrollY > 0 ? Math.min(latest, maxScrollY) : latest;
 
@@ -154,14 +174,14 @@ function ProjectCard({
             <p className="mt-2 hidden max-w-[400px] text-sm text-[#D7E2EA]/80 sm:block">{project.description}</p>
           </div>
         </div>
-        <LiveProjectButton className="self-start sm:self-auto shrink-0 px-4 py-2 text-[10px] sm:px-6 sm:py-2.5 sm:text-xs md:px-8 md:py-3 md:text-sm" />
+        <LiveProjectButton href={project.repo} label={project.name} className="self-start sm:self-auto shrink-0 px-4 py-2 text-[10px] sm:px-6 sm:py-2.5 sm:text-xs md:px-8 md:py-3 md:text-sm" />
       </div>
       <div className="mt-5 grid min-h-0 flex-1 grid-cols-[40%_60%] gap-2 sm:mt-8 sm:gap-3">
         <div className="flex min-h-0 flex-col gap-2 sm:gap-3">
-          <img src={project.images[0]} alt={`${project.name} detail`} className="min-h-0 w-full flex-1 object-cover rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
-          <img src={project.images[1]} alt={`${project.name} detail`} className="min-h-0 w-full flex-[1.35] object-cover rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
+          <img src={project.images[0].src} alt={project.images[0].alt} loading="lazy" decoding="async" className="min-h-0 w-full flex-1 bg-[#07070a] object-contain rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
+          <img src={project.images[1].src} alt={project.images[1].alt} loading="lazy" decoding="async" className="min-h-0 w-full flex-[1.35] bg-[#07070a] object-contain rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
         </div>
-        <img src={project.images[2]} alt={`${project.name} showcase`} className="h-full min-h-0 w-full object-cover rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
+        <img src={project.images[2].src} alt={project.images[2].alt} loading="lazy" decoding="async" className="h-full min-h-0 w-full bg-[#07070a] object-contain rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
       </div>
     </motion.article>
   );
@@ -177,10 +197,10 @@ export default function ProjectsSection() {
       <FadeIn
         y={40}
         as="h2"
-        className="hero-heading mb-8 text-center font-black uppercase leading-none tracking-tight sm:mb-10 md:mb-14"
+        className="mb-8 text-center font-black uppercase leading-none tracking-tight sm:mb-10 md:mb-14"
         style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
       >
-        THINGS I MADE
+        <QuirkyText text="THINGS I MADE" variant="quirk-jelly" letterClassName="hero-heading" />
       </FadeIn>
       <FadeIn y={30} delay={0.2} className="mx-auto mb-16 max-w-2xl text-center sm:mb-20 md:mb-24">
         <p className="text-sm font-light leading-relaxed text-[#D7E2EA]/70 sm:text-base md:text-lg">

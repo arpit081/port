@@ -4,26 +4,26 @@ const TRACKS = [
   {
     title: "About You",
     artist: "The 1975",
-    audioUrl: "https://rrxddweegokgoltcfrfr.supabase.co/storage/v1/object/public/songs/audio/The%201975%20-%20About%20You%20-%20(320%20Kbps).mp3",
-    artworkUrl: "https://rrxddweegokgoltcfrfr.supabase.co/storage/v1/object/public/songs/audio/covers/about-you.jpg"
+    audioUrl: "/music/about-you.mp3",
+    artworkUrl: "/music/covers/about-you.jpg"
   },
   {
     title: "back to friends",
     artist: "sombr",
-    audioUrl: "https://rrxddweegokgoltcfrfr.supabase.co/storage/v1/object/public/songs/audio/sombr%20-%20back%20to%20friends%20-%20(320%20Kbps).mp3",
-    artworkUrl: "https://rrxddweegokgoltcfrfr.supabase.co/storage/v1/object/public/songs/audio/covers/back-to-friends.jpg"
+    audioUrl: "/music/back-to-friends.mp3",
+    artworkUrl: "/music/covers/back-to-friends.jpg"
   },
   {
     title: "I Think They Call This Love",
     artist: "Matthew Ifield",
-    audioUrl: "https://rrxddweegokgoltcfrfr.supabase.co/storage/v1/object/public/songs/audio/Matthew%20Ifield%20-%20I%20Think%20They%20Call%20This%20Love%20(Cover)%20-%20(320%20Kbps).mp3",
-    artworkUrl: "https://rrxddweegokgoltcfrfr.supabase.co/storage/v1/object/public/songs/audio/covers/i-think-they-call-this-love.jpg"
+    audioUrl: "/music/i-think-they-call-this-love.mp3",
+    artworkUrl: "/music/covers/i-think-they-call-this-love.jpg"
   },
   {
     title: "Sailor Song",
     artist: "Gigi Perez",
-    audioUrl: "https://rrxddweegokgoltcfrfr.supabase.co/storage/v1/object/public/songs/audio/Gigi%20Perez%20-%20Sailor%20Song%20-%20(320%20Kbps).mp3",
-    artworkUrl: "https://rrxddweegokgoltcfrfr.supabase.co/storage/v1/object/public/songs/audio/covers/sailor-song.jpg"
+    audioUrl: "/music/sailor-song.mp3",
+    artworkUrl: "/music/covers/sailor-song.jpg"
   }
 ];
 
@@ -68,7 +68,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   useEffect(() => {
     const audio = new Audio();
     audioRef.current = audio;
-    audio.volume = volume;
+    audio.volume = Math.pow(volume, 1.7);
 
     const handleTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
@@ -106,10 +106,10 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     };
   }, []); // Intentionally omit volume from deps so it doesn't re-create audio element
 
-  // Update volume when it changes
+  // Update volume when it changes with a perceptual curve
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = volume;
+      audioRef.current.volume = Math.pow(volume, 1.7);
     }
   }, [volume]);
 
@@ -119,7 +119,8 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     if (!audio) return;
 
     // Only set source if it's different to prevent resetting playback on re-renders
-    if (audio.src !== currentTrack.audioUrl) {
+    // audio.src is always absolute, so resolve the track URL before comparing
+    if (audio.src !== new URL(currentTrack.audioUrl, window.location.href).href) {
       audio.src = currentTrack.audioUrl;
       if (isPlaying) {
         audio.play().catch(() => setIsPlaying(false));

@@ -26,12 +26,180 @@ body,
    Floating Music Button
    ═══════════════════════════════════════ */
 
+/* ═══════════════════════════════════════
+   Hero lens (cursor-following liquid glass)
+   ═══════════════════════════════════════ */
+
+/* Zero-size point that springs after the cursor; the bubble centres on it */
+.hero-lens-anchor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Size and offsets are set inline (HeroLens computes the diameter) */
+.hero-lens {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.45),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* What you see through the glass: a page-coloured disc showing the enlarged
+   text copy, so the original underneath never doubles up with it */
+.hero-lens-view {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #0c0c0c;
+}
+
+.hero-lens-pan {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* The droplet itself: nearly clear, with light caught on the rim. No blur, so
+   the magnified text underneath stays crisp. */
+.hero-lens-surface {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.04) 28%, transparent 52%),
+    radial-gradient(circle at 70% 82%, rgba(255, 255, 255, 0.1) 0%, transparent 38%),
+    radial-gradient(circle, transparent 62%, rgba(255, 255, 255, 0.06) 100%);
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.55),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 0 24px rgba(255, 255, 255, 0.06);
+}
+
+/* ═══════════════════════════════════════
+   Scroll cue
+   ═══════════════════════════════════════ */
+
+.scroll-cue {
+  position: absolute;
+  bottom: 28px;
+  right: 24px;
+  z-index: 6;
+  color: rgba(215, 226, 234, 0.55);
+  transition: color 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .scroll-cue {
+    right: auto;
+    left: 50%;
+    bottom: 40px;
+    transform: translateX(-50%);
+  }
+}
+
+.scroll-cue:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.scroll-cue-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: cueIn 0.9s 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+
+@keyframes cueIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scroll-cue-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  /* letter-spacing trails after the last glyph; pad the start to re-centre */
+  padding-left: 0.4em;
+  text-transform: uppercase;
+}
+
+.scroll-cue-track {
+  position: relative;
+  width: 1px;
+  height: 46px;
+  background: linear-gradient(to bottom, rgba(215, 226, 234, 0.05), rgba(215, 226, 234, 0.35) 50%, rgba(215, 226, 234, 0.05));
+}
+
+/* A tiny glass bead gliding down the hairline */
+.scroll-cue-bead {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, rgba(215, 226, 234, 0.85) 45%, rgba(215, 226, 234, 0.4) 100%);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.45), inset 0 -1px 1px rgba(0, 0, 0, 0.15);
+  animation: beadGlide 2.4s cubic-bezier(0.65, 0, 0.35, 1) 2s infinite;
+  opacity: 0;
+}
+
+@keyframes beadGlide {
+  0% {
+    transform: translateY(-2px);
+    opacity: 0;
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  72% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue-inner {
+    animation: none;
+  }
+
+  .scroll-cue-bead {
+    animation: none;
+    opacity: 1;
+    transform: translateY(19px);
+  }
+}
+
 /* Unified Morphing Music Player */
 .music-btn-anchor {
   position: absolute;
   bottom: 27%;
   left: 1.5%;
-  z-index: 15;
+  /* The player inside is z-index 9999, but this anchor is its stacking
+     context: keep it above the interest video window (45), below the navbar (50) */
+  z-index: 46;
 }
 
 @media (max-width: 640px) {
@@ -53,10 +221,24 @@ body,
   flex-direction: column;
   justify-content: space-between;
 
-  /* Apple-style liquid glass effect */
+  /* Only the shape and the drop shadow live on this wrapper. The glass surface
+     itself is .music-player-clip, so the liquid-glass lens (a sibling before
+     the clip) sits between the page and the glass and can bend the page. */
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Apple-style liquid glass surface. Blur clears 24px → 6px with the slider. */
+.music-player-clip {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+
   background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.35) 0%, rgba(179, 179, 179, 0.15) 100%);
-  backdrop-filter: blur(24px) saturate(160%) brightness(1.15);
-  -webkit-backdrop-filter: blur(24px) saturate(160%) brightness(1.15);
+  backdrop-filter: blur(calc(24px - 18px * var(--glass, 0))) saturate(160%) brightness(1.15);
+  -webkit-backdrop-filter: blur(calc(24px - 18px * var(--glass, 0))) saturate(160%) brightness(1.15);
 
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-top: 1px solid rgba(255, 255, 255, 0.45);
@@ -66,16 +248,7 @@ body,
     inset 0 1px 2px rgba(255, 255, 255, 0.5),
     inset 0 4px 12px rgba(255, 255, 255, 0.2),
     inset 0 -2px 6px rgba(179, 179, 179, 0.2),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.1),
-    0 4px 16px rgba(0, 0, 0, 0.4),
-    0 8px 32px rgba(0, 0, 0, 0.2);
-}
-
-.music-player-clip {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  overflow: hidden;
+    inset 0 -1px 2px rgba(0, 0, 0, 0.1);
 }
 
 
@@ -87,10 +260,15 @@ body,
   cursor: pointer;
 }
 
+/* Open card height tracks the viewport (capped at 460px); the artwork absorbs
+   the difference so the controls never get clipped. The hero anchor sits ~27%
+   up the screen, so the card can only grow into the remaining ~73%. */
 .music-player-unified[data-open="true"] {
   left: 20px;
   width: 330px;
   height: 460px;
+  height: min(460px, calc(73vh - 16px));
+  height: min(460px, calc(73dvh - 16px));
   border-radius: 32px;
 }
 
@@ -104,6 +282,8 @@ body,
     width: calc(100% - 32px);
     max-width: 330px;
     height: 440px;
+    height: min(440px, calc(100vh - 32px));
+    height: min(440px, calc(100dvh - 32px));
     transform-origin: bottom center;
   }
 }
@@ -119,6 +299,8 @@ body,
   left: 28px;
   width: 330px;
   height: 460px;
+  height: min(460px, calc(100vh - 56px));
+  height: min(460px, calc(100dvh - 56px));
 }
 
 /* When scrolled and closed (the Pill mode) */
@@ -128,32 +310,40 @@ body,
   width: 340px;
   height: 68px;
   border-radius: 999px;
-  /* Use the pill's glass effect */
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* The pill's own glass surface */
+.music-player-unified.is-pill .music-player-clip {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(255, 255, 255, 0.08) 100%),
     linear-gradient(100deg, rgba(255, 255, 255, 0) 20%, rgba(255, 100, 100, 0.03) 40%, rgba(100, 255, 100, 0.03) 60%, rgba(100, 100, 255, 0.03) 80%, rgba(255, 255, 255, 0) 100%);
-  backdrop-filter: blur(24px) saturate(200%) brightness(1.1) contrast(1.1);
-  -webkit-backdrop-filter: blur(24px) saturate(200%) brightness(1.1) contrast(1.1);
-  
+  backdrop-filter: blur(calc(24px - 18px * var(--glass, 0))) saturate(200%) brightness(1.1) contrast(1.1);
+  -webkit-backdrop-filter: blur(calc(24px - 18px * var(--glass, 0))) saturate(200%) brightness(1.1) contrast(1.1);
+
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-top: 1px solid rgba(255, 255, 255, 0.4);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.5),
-    inset 0 -1px 2px rgba(255, 255, 255, 0.1),
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    0 2px 8px rgba(0, 0, 0, 0.2);
+    inset 0 -1px 2px rgba(255, 255, 255, 0.1);
 }
 
 .music-player-unified.is-pill.light-mode {
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.music-player-unified.is-pill.light-mode .music-player-clip {
   border-color: rgba(0, 0, 0, 0.15);
   border-top-color: rgba(255, 255, 255, 0.5);
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.6),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
-    0 8px 32px rgba(0, 0, 0, 0.15),
-    0 2px 8px rgba(0, 0, 0, 0.1);
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
 }
 
 
@@ -216,10 +406,98 @@ body,
   background: transparent;
 }
 
+/* Real content sits above the ambient artwork glow */
+.music-card-content > :not(.music-ambient) {
+  position: relative;
+  z-index: 1;
+}
+
+.music-ambient {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  /* Thins out as the glass clears so the refraction behind shows through */
+  opacity: calc(0.4 - 0.18 * var(--glass, 0));
+  z-index: 0;
+  transition: opacity 0.4s ease;
+}
+
+.music-player-unified.light-mode .music-ambient {
+  opacity: calc(0.25 - 0.1 * var(--glass, 0));
+}
+
+.music-ambient-img {
+  position: absolute;
+  top: -30%;
+  left: -30%;
+  width: 160%;
+  height: 160%;
+  max-width: none;
+  object-fit: cover;
+  filter: blur(48px) saturate(1.6);
+  animation: ambientDrift 24s ease-in-out infinite alternate;
+}
+
+@keyframes ambientDrift {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+
+  to {
+    transform: rotate(18deg) scale(1.15);
+  }
+}
+
+/* Shrinks (keeping its square) when the card is short; width follows height */
+.artwork-container {
+  flex: 0 1 192px;
+  min-height: 40px;
+  width: auto;
+  align-self: center;
+  aspect-ratio: 1 / 1;
+  border-radius: 24px;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.music-card-content > :not(.music-ambient):not(.artwork-container) {
+  flex-shrink: 0;
+}
+
 .music-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+/* Long titles scroll instead of wrapping */
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 2px 0;
+}
+
+.marquee.is-overflowing {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6px, #000 calc(100% - 24px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 6px, #000 calc(100% - 24px), transparent 100%);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+}
+
+.marquee-track > span {
+  display: block;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-ambient-img {
+    animation: none;
+  }
 }
 
 .song-title {
@@ -258,35 +536,59 @@ body,
   position: relative;
 }
 
-.progress-bar-container {
+/* Seek bar: thickens on hover, more when grabbed (Apple Music-style) */
+.scrubber {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scrubber-hit {
+  display: flex;
+  align-items: center;
+  height: 20px;
+  margin: -6px 0;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+.scrubber-track {
+  position: relative;
   width: 100%;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
+  border-radius: 999px;
   overflow: hidden;
+  background: rgba(255, 255, 255, 0.2);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.music-player-unified.light-mode .progress-bar-container {
+.scrubber-hit:focus-visible .scrubber-track {
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.scrubber-fill {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: inherit;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.music-player-unified.light-mode .scrubber-track {
   background: rgba(0, 0, 0, 0.15);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.progress-bar-fill {
-  height: 100%;
-  background: white;
-  border-radius: 3px;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-}
-
-.music-player-unified.light-mode .progress-bar-fill {
-  background: #1a1a1a;
+.music-player-unified.light-mode .scrubber-fill {
+  background: rgba(29, 29, 31, 0.9);
   box-shadow: none;
 }
 
 .time-info {
   display: flex;
   justify-content: space-between;
+  font-variant-numeric: tabular-nums;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.75rem;
   font-weight: 500;
@@ -304,11 +606,13 @@ body,
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px;
+  /* 36px glass-hit buttons: 14px less gap keeps glyphs where they were */
+  gap: 10px;
   margin-top: 4px;
 }
 
 .control-btn {
+  position: relative;
   background: none;
   border: none;
   cursor: pointer;
@@ -316,34 +620,205 @@ body,
   align-items: center;
   justify-content: center;
   opacity: 0.8;
-  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.2s ease;
   filter: none;
-}
-
-.control-btn.volume-btn {
-  position: absolute;
-  right: 0;
 }
 
 .control-btn:hover {
   opacity: 1;
-  transform: scale(1.1);
 }
 
+/* Square hit target so the halo is a true circle centred on the glyph */
+.glass-hit {
+  width: 36px;
+  height: 36px;
+}
+
+/* Soft glow that blooms behind secondary buttons on hover/press. A radial
+   falloff instead of a solid disc, so it has no hard edge. */
+.glass-hit::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.12) 45%, rgba(255, 255, 255, 0) 70%);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.25s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.glass-hit:hover::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.glass-hit:active::before {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.18) 45%, rgba(255, 255, 255, 0) 70%);
+}
+
+.music-player-unified.light-mode .glass-hit::before {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.05) 45%, rgba(0, 0, 0, 0) 70%);
+}
+
+.music-player-unified.light-mode .glass-hit:active::before {
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.13) 0%, rgba(0, 0, 0, 0.08) 45%, rgba(0, 0, 0, 0) 70%);
+}
+
+/* ═══════════════════════════════════════
+   Volume Slider (Control Center-style glass capsule)
+   ═══════════════════════════════════════ */
+
+.volume-wrapper {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  z-index: 20;
+}
+
+/* Anchored above the speaker icon; the bottom padding is an invisible
+   hover bridge so moving the cursor up to the slider never closes it */
+.volume-popover {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -32px;
+  width: 64px;
+  padding: 0 10px 10px;
+  transform-origin: bottom center;
+}
+
+.volume-hit-area {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 4px 0;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+.volume-press {
+  width: 44px;
+}
+
+.volume-capsule {
+  position: relative;
+  width: 44px;
+  border-radius: 22px;
+  overflow: hidden;
+  isolation: isolate;
+
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%);
+  backdrop-filter: blur(calc(30px - 26px * var(--glass, 0))) saturate(1.8) brightness(1.05);
+  -webkit-backdrop-filter: blur(calc(30px - 26px * var(--glass, 0))) saturate(1.8) brightness(1.05);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-top-color: rgba(255, 255, 255, 0.4);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.45),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.08),
+    0 10px 30px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.volume-hit-area:focus-visible .volume-capsule {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.45),
+    0 0 0 3px rgba(255, 255, 255, 0.35),
+    0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.volume-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.6), 0 0 16px rgba(255, 255, 255, 0.25);
+  pointer-events: none;
+}
+
+.volume-capsule-icon {
+  position: absolute;
+  left: 50%;
+  bottom: 13px;
+  margin-left: -9px;
+  display: flex;
+  color: rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+  transition: color 0.2s ease;
+  z-index: 1;
+}
+
+.volume-capsule-icon.is-covered {
+  color: rgba(28, 28, 30, 0.75);
+}
+
+/* Over white sections the card turns light, so the slider inverts */
+.music-player-unified.light-mode .volume-capsule {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(240, 240, 242, 0.45) 100%);
+  border-color: rgba(0, 0, 0, 0.08);
+  border-top-color: rgba(255, 255, 255, 0.8);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    0 10px 30px rgba(0, 0, 0, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.music-player-unified.light-mode .volume-fill {
+  background: rgba(29, 29, 31, 0.9);
+  box-shadow: none;
+}
+
+.music-player-unified.light-mode .volume-capsule-icon {
+  color: rgba(29, 29, 31, 0.8);
+}
+
+.music-player-unified.light-mode .volume-capsule-icon.is-covered {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Frosted, slightly translucent disc with a feathered rim so the edge melts
+   into the glass instead of reading as a hard white cut-out */
 .control-btn.play-btn {
-  background: rgba(255, 255, 255, 0.9);
+  /* Turns semi-clear in liquid mode so its rim can visibly refract the card */
+  background: radial-gradient(circle at 50% 28%,
+      rgba(255, 255, 255, calc(0.97 - 0.32 * var(--glass, 0))) 0%,
+      rgba(246, 246, 249, calc(0.9 - 0.32 * var(--glass, 0))) 55%,
+      rgba(226, 226, 233, calc(0.82 - 0.32 * var(--glass, 0))) 100%);
+  backdrop-filter: blur(calc(12px - 10px * var(--glass, 0))) saturate(1.6);
+  -webkit-backdrop-filter: blur(calc(12px - 10px * var(--glass, 0))) saturate(1.6);
   width: 52px;
   height: 52px;
   border-radius: 50%;
   opacity: 1;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  /* No crisp ring: a blurred white spread feathers the edge into the glass */
+  box-shadow:
+    0 0 4px 1px rgba(255, 255, 255, 0.35),
+    0 0 14px 2px rgba(255, 255, 255, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.08),
+    inset 0 0 4px rgba(0, 0, 0, 0.05),
+    0 6px 18px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease;
   filter: none;
 }
 
 .control-btn.play-btn:hover {
-  transform: scale(1.08);
-  background: white;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 0 6px 2px rgba(255, 255, 255, 0.45),
+    0 0 20px 4px rgba(255, 255, 255, 0.18),
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    inset 0 -3px 8px rgba(0, 0, 0, 0.08),
+    inset 0 0 4px rgba(0, 0, 0, 0.05),
+    0 8px 24px rgba(0, 0, 0, 0.26);
 }
 
 
@@ -499,26 +974,63 @@ body,
 }
 
 @keyframes wave-1 {
-  0%, 100% { transform: scaleY(1); }
-  33% { transform: scaleY(0.85); }
-  66% { transform: scaleY(1.15); }
+
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+
+  33% {
+    transform: scaleY(0.85);
+  }
+
+  66% {
+    transform: scaleY(1.15);
+  }
 }
 
 @keyframes wave-2 {
-  0%, 100% { transform: scaleY(0.9); }
-  25% { transform: scaleY(1.15); }
-  75% { transform: scaleY(0.8); }
+
+  0%,
+  100% {
+    transform: scaleY(0.9);
+  }
+
+  25% {
+    transform: scaleY(1.15);
+  }
+
+  75% {
+    transform: scaleY(0.8);
+  }
 }
 
 @keyframes wave-3 {
-  0%, 100% { transform: scaleY(1.1); }
-  40% { transform: scaleY(0.85); }
-  80% { transform: scaleY(1.15); }
+
+  0%,
+  100% {
+    transform: scaleY(1.1);
+  }
+
+  40% {
+    transform: scaleY(0.85);
+  }
+
+  80% {
+    transform: scaleY(1.15);
+  }
 }
 
 @keyframes wave-4 {
-  0%, 100% { transform: scaleY(0.85); }
-  50% { transform: scaleY(1.15); }
+
+  0%,
+  100% {
+    transform: scaleY(0.85);
+  }
+
+  50% {
+    transform: scaleY(1.15);
+  }
 }
 
 .pill-time {
@@ -578,41 +1090,2053 @@ body,
   transform: scale(0.95);
 }
 
+/* PlayerIcons fill and stroke with currentColor, so colour drives both */
 .pill-icon {
-  fill: white;
-  transition: fill 0.5s ease;
+  color: white;
+  transition: color 0.5s ease;
 }
 
 .music-player-unified.light-mode .pill-icon {
-  fill: rgba(0, 0, 0, 0.8);
+  color: rgba(0, 0, 0, 0.8);
 }
 
 /* ═══════════════════════════════════════
-   Skills Expanded Card Glass Material
+   Liquid Glass (driven by --glass: 0 frosted → 1 clear)
+   Refraction itself is an SVG backdrop filter set inline by useLiquidGlass;
+   these rules are the frosted fallback plus everything that fades with clarity.
    ═══════════════════════════════════════ */
 
-.skills-glass-panel {
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-  backdrop-filter: blur(40px) saturate(200%) brightness(1.05);
-  -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.05);
-  
-  border: 1px solid rgba(0, 0, 0, 0.1);
-
-  box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.8),
-    inset 0 4px 12px rgba(255, 255, 255, 0.2),
-    0 12px 40px rgba(0, 0, 0, 0.12),
-    0 2px 12px rgba(0, 0, 0, 0.06);
+/* Navbar dot + dropdown. The dark tint thins out as the glass clears so the
+   bending is visible, but never below ~50% so the links stay readable. */
+/* Wrapper: shape and drop shadow only, so the lens inside it can see the page */
+.nav-shell {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-.skills-glass-pill {
-  backdrop-filter: blur(32px) saturate(180%) brightness(1.05);
-  -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(1.05);
-  
-  border: 1px solid rgba(0, 0, 0, 0.12);
-
+/* The glass surface: a sibling drawn over the lens. Blur clears 24px → 3px. */
+.nav-glass {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: rgba(10, 10, 10, calc(0.8 - 0.3 * var(--glass, 0)));
+  backdrop-filter: blur(calc(24px - 21px * var(--glass, 0)));
+  -webkit-backdrop-filter: blur(calc(24px - 21px * var(--glass, 0)));
+  border: 1px solid rgba(255, 255, 255, calc(0.1 - 0.04 * var(--glass, 0)));
   box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.8),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
-    0 4px 12px rgba(0, 0, 0, 0.08);
+    inset 0 1px 1px rgba(255, 255, 255, calc(0.08 + 0.17 * var(--glass, 0))),
+    inset 0 0 calc(16px * var(--glass, 0)) rgba(255, 255, 255, calc(0.08 * var(--glass, 0)));
+}
+
+/* Refraction layer (see useLiquidGlass). Big lenses fade out while the page
+   scrolls; small ones (data-scroll-live: pill, nav dot) stay live. Any lens
+   fades during its own panel's morph. Visibility flips after the fade so
+   Chrome draws nothing at all. */
+.lg-lens {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0s;
+}
+
+html[data-scrolling] .lg-lens:not([data-scroll-live]),
+.lg-lens[data-hidden] {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.12s ease, visibility 0s linear 0.12s;
+}
+
+/* Specular rim: bright where light would catch the top-left and bottom-right
+   curves of real glass. Fades in with clarity. Built from offset inset shadows
+   rather than a masked gradient ring: Chrome rasterizes masks separately, so a
+   masked 1px ring shimmered whenever a glass button scaled on hover. */
+.lg-rim::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.6),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  opacity: var(--glass, 0);
+  pointer-events: none;
+}
+
+/* Glass that scales on hover/press stays on its own layer, so Chrome doesn't
+   swap rendering paths (and re-draw the glass) as each animation starts/ends */
+.control-btn.play-btn,
+.pill-play-btn,
+.volume-capsule {
+  will-change: transform;
+}
+
+/* Keep pixels under/inside refracting glass still on Liquid (see glass.ts).
+   Inside the card only the full-area album glow rests; small motion is cheap. */
+html[data-liquid] .music-ambient-img {
+  animation-play-state: paused;
+}
+
+/* Behind an open nav menu / player card: the skills loops hold still */
+html[data-liquid][data-glass-focus] .skills-section *,
+html[data-liquid][data-glass-focus] .skills-section *::before,
+html[data-liquid][data-glass-focus] .skills-section *::after,
+html[data-liquid][data-glass-focus] .hello-badge-ring {
+  animation-play-state: paused !important;
+}
+
+/* Frosted ↔ Liquid slider (navbar menu) */
+.glass-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(215, 226, 234, 0.55);
+}
+
+.glass-slider-hit {
+  position: relative;
+  padding: 4px 0;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+.glass-slider-capsule {
+  position: relative;
+  width: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.06) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-top-color: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.glass-slider-hit:focus-visible .glass-slider-capsule {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.glass-slider-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 1px 0 0 rgba(255, 255, 255, 0.6), 0 0 14px rgba(255, 255, 255, 0.25);
+  pointer-events: none;
+}
+
+.glass-slider-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  margin-top: -7.5px;
+  display: flex;
+  color: rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+  transition: color 0.2s ease;
+  z-index: 1;
+}
+
+.glass-slider-icon.is-covered {
+  color: rgba(28, 28, 30, 0.75);
+}
+
+/* ═══════════════════════════════════════
+   Skills section (bento of glass tiles)
+   ═══════════════════════════════════════ */
+
+/* Drifting colour fields behind the tiles. Blurred once, then only
+   transformed, so the browser can keep them on the compositor. */
+/* Fades out before the bottom edge: the projects section slides over this one,
+   and its straight top edge would otherwise slice through the glow */
+.skills-aurora {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 360px), transparent calc(100% - 110px));
+  mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 360px), transparent calc(100% - 110px));
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.55;
+  will-change: transform;
+  animation: auroraDrift 28s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+
+.skills-section.is-live .aurora-blob {
+  animation-play-state: running;
+}
+
+.blob-1 {
+  width: 46vw;
+  height: 46vw;
+  max-width: 620px;
+  max-height: 620px;
+  top: 18%;
+  left: -8%;
+  background: #6d28d9;
+}
+
+.blob-2 {
+  width: 40vw;
+  height: 40vw;
+  max-width: 540px;
+  max-height: 540px;
+  top: 30%;
+  right: -6%;
+  background: #0e7490;
+  animation-duration: 34s;
+  animation-delay: -8s;
+}
+
+.blob-3 {
+  width: 34vw;
+  height: 34vw;
+  max-width: 460px;
+  max-height: 460px;
+  top: 58%;
+  left: 30%;
+  background: #b600a8;
+  opacity: 0.4;
+  animation-duration: 40s;
+  animation-delay: -16s;
+}
+
+/* Warms the bottom row of tiles */
+.blob-4 {
+  width: 50vw;
+  height: 30vw;
+  max-width: 700px;
+  max-height: 420px;
+  bottom: 10%;
+  left: 34%;
+  background: #be4c00;
+  opacity: 0.32;
+  animation-duration: 36s;
+  animation-delay: -4s;
+}
+
+@keyframes auroraDrift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(6vw, -4vh, 0) scale(1.12);
+  }
+
+  100% {
+    transform: translate3d(-4vw, 5vh, 0) scale(0.94);
+  }
+}
+
+.skill-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 340px;
+  padding: 26px;
+  border-radius: 32px;
+  overflow: hidden;
+  color: #d7e2ea;
+
+  /* Liquid look in pure CSS (see SkillTile): as --glass rises the blur clears
+     from 24px to 8px, colour gets richer and the edges pick up a glassy glow */
+  background: linear-gradient(160deg,
+      rgba(255, 255, 255, calc(0.09 - 0.03 * var(--glass, 0))) 0%,
+      rgba(255, 255, 255, calc(0.03 - 0.01 * var(--glass, 0))) 100%);
+  backdrop-filter: blur(calc(24px - 16px * var(--glass, 0))) saturate(calc(1.6 + 0.2 * var(--glass, 0))) brightness(1.05);
+  -webkit-backdrop-filter: blur(calc(24px - 16px * var(--glass, 0))) saturate(calc(1.6 + 0.2 * var(--glass, 0))) brightness(1.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top-color: rgba(255, 255, 255, 0.22);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, calc(0.18 + 0.12 * var(--glass, 0))),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2),
+    inset 0 0 calc(22px * var(--glass, 0)) rgba(255, 255, 255, calc(0.07 * var(--glass, 0))),
+    0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+/* Soft light that follows the cursor across the glass */
+.skill-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, 0.1), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.skill-tile:hover::before {
+  opacity: 1;
+}
+
+.skill-tile > * {
+  position: relative;
+}
+
+.skill-tile-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skill-tile-index {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: rgba(215, 226, 234, 0.45);
+}
+
+.skill-tile-title {
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+.skill-tile-blurb {
+  font-size: 0.9rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: rgba(215, 226, 234, 0.7);
+}
+
+.skill-tile-visual {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+}
+
+.skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+}
+
+.skill-chips li,
+.tools-group-chips li {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* ── AI tile: knowledge graph ── */
+.knowledge-graph {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  overflow: visible;
+}
+
+.kg-edge {
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 1;
+}
+
+.kg-edge.is-path {
+  stroke: rgba(196, 181, 253, 0.55);
+  stroke-width: 1.4;
+}
+
+.kg-node {
+  fill: #ffffff;
+}
+
+.kg-node.is-minor {
+  fill: rgba(255, 255, 255, 0.45);
+}
+
+.kg-halo {
+  fill: rgba(196, 181, 253, 0.16);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: kgPulse 3.2s ease-in-out infinite;
+  animation-play-state: paused;
+}
+
+.skills-section.is-live .kg-halo {
+  animation-play-state: running;
+}
+
+@keyframes kgPulse {
+  0%,
+  100% {
+    transform: scale(0.7);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+.kg-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  fill: rgba(215, 226, 234, 0.75);
+}
+
+/* ── Backend tile: terminal ── */
+.api-terminal {
+  width: 100%;
+  padding: 14px 16px 16px;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.7;
+  overflow: hidden;
+}
+
+.api-terminal-dots {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.api-terminal-dots span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.api-line {
+  min-height: 1.7em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.api-line.tone-cmd {
+  color: #ffffff;
+}
+
+.api-line.tone-muted {
+  color: rgba(215, 226, 234, 0.55);
+}
+
+.api-line.tone-info {
+  color: #c4b5fd;
+}
+
+.api-line.tone-ok {
+  color: #6ee7b7;
+}
+
+.api-caret {
+  display: inline-block;
+  width: 6px;
+  height: 1.1em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: rgba(255, 255, 255, 0.8);
+  animation: caretBlink 1s steps(1) infinite;
+}
+
+@keyframes caretBlink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ── Frontend tile: self-playing UI bits ── */
+.ui-playground {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 260px;
+}
+
+.ui-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ui-toggle {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  animation: uiToggleTrack 3.6s ease-in-out infinite;
+}
+
+.ui-toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  animation: uiToggleKnob 3.6s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+}
+
+@keyframes uiToggleTrack {
+  0%,
+  40%,
+  100% {
+    background: rgba(255, 255, 255, 0.14);
+  }
+
+  50%,
+  90% {
+    background: #34c759;
+  }
+}
+
+@keyframes uiToggleKnob {
+  0%,
+  40%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50%,
+  90% {
+    transform: translateX(18px);
+  }
+}
+
+.ui-slider {
+  position: relative;
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+.ui-slider-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #ffffff;
+  transform-origin: left;
+  animation: uiSlider 4.4s ease-in-out infinite;
+}
+
+@keyframes uiSlider {
+  0%,
+  100% {
+    transform: scaleX(0.22);
+  }
+
+  50% {
+    transform: scaleX(0.84);
+  }
+}
+
+.ui-button {
+  flex-shrink: 0;
+  padding: 7px 18px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  animation: uiPress 3s ease-in-out infinite;
+}
+
+@keyframes uiPress {
+  0%,
+  70%,
+  100% {
+    transform: scale(1);
+  }
+
+  78% {
+    transform: scale(0.9);
+  }
+
+  86% {
+    transform: scale(1.04);
+  }
+}
+
+.ui-skeleton {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ui-skeleton span {
+  height: 7px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.1) 100%);
+  background-size: 200% 100%;
+  animation: uiShimmer 2.2s linear infinite;
+}
+
+.ui-skeleton span:last-child {
+  width: 65%;
+}
+
+@keyframes uiShimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Tools tile: every tool visible, grouped, gently drifting ── */
+.tools-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  width: 100%;
+}
+
+/* Four groups: a 2×2 grid, since the longer chips ("Unstructured Data
+   Processing") don't fit in a quarter of the tile */
+@media (min-width: 640px) {
+  .tools-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 20px;
+  }
+}
+
+.tools-group-label {
+  margin-bottom: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(215, 226, 234, 0.5);
+}
+
+.tools-group-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+}
+
+/* Slightly larger than the other tiles' chips: here the chips ARE the content.
+   The drift is a staggered wave so the tile feels alive without moving text
+   out of reach; hover lifts and lights a chip. */
+.tools-group-chips li {
+  padding: 9px 16px;
+  font-size: 0.85rem;
+  animation: chipDrift 3.6s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -0.45s);
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.tools-group-chips li:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 18px rgba(255, 255, 255, 0.12);
+  animation-play-state: paused !important;
+}
+
+@keyframes chipDrift {
+  from {
+    transform: translateY(2px);
+  }
+
+  to {
+    transform: translateY(-3px);
+  }
+}
+
+/* Loops sit still until the section is on screen */
+.ui-toggle,
+.ui-toggle-knob,
+.ui-slider-fill,
+.ui-button,
+.ui-skeleton span,
+.tools-group-chips li {
+  animation-play-state: paused;
+}
+
+.skills-section.is-live .ui-toggle,
+.skills-section.is-live .ui-toggle-knob,
+.skills-section.is-live .ui-slider-fill,
+.skills-section.is-live .ui-button,
+.skills-section.is-live .ui-skeleton span,
+.skills-section.is-live .tools-group-chips li {
+  animation-play-state: running;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob,
+  .kg-halo,
+  .ui-toggle,
+  .ui-toggle-knob,
+  .ui-slider-fill,
+  .ui-button,
+  .ui-skeleton span,
+  .tools-group-chips li,
+  .api-caret {
+    animation: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Say Hello (contact) section
+   Everything here is hover transitions; the only running animation is the
+   badge's rotation, which stays on the compositor.
+   ═══════════════════════════════════════ */
+
+.hello-section {
+  color: #d7e2ea;
+}
+
+/* ── Heading: letters hop in a wave on hover ── */
+.hello-heading {
+  display: inline-flex;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  cursor: default;
+}
+
+.hello-letter {
+  display: inline-block;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: calc(var(--i) * 35ms);
+}
+
+.hello-heading:hover .hello-letter {
+  transform: translateY(-0.08em) rotate(-3deg);
+}
+
+.hello-heading:hover .hello-letter:nth-child(even) {
+  transform: translateY(-0.04em) rotate(3deg);
+}
+
+/* ── Rotating sticker ── */
+/* Sits on the message card's top-right corner, mostly outside it */
+.hello-badge {
+  position: absolute;
+  top: -62px;
+  right: -8px;
+  width: 96px;
+  height: 96px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .hello-badge {
+    top: -72px;
+    right: -22px;
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* Two columns: the first line runs to the card's edge, but there's open space
+   above the card, so the sticker rides higher and stays inside the padding */
+@media (min-width: 1024px) {
+  .hello-badge {
+    top: -92px;
+  }
+}
+
+.hello-badge-ring {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: badgeSpin 22s linear infinite;
+}
+
+.hello-badge-ring text {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  fill: rgba(215, 226, 234, 0.75);
+}
+
+@keyframes badgeSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hello-badge-ring {
+  transform-origin: 50% 50%;
+}
+
+.hello-badge-core {
+  position: absolute;
+  inset: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #d7e2ea;
+  color: #0c0c0c;
+  font-size: clamp(0.85rem, 1.6vw, 1.1rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  transform: rotate(-12deg);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* ── Contact rows (same numbered rhythm as Road So Far / Outside the Code) ── */
+.hello-rows {
+  list-style: none;
+  border-bottom: 1px solid rgba(215, 226, 234, 0.12);
+}
+
+.hello-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid rgba(215, 226, 234, 0.12);
+}
+
+.hello-row-link {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+  padding: 18px 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.hello-row-num {
+  flex-shrink: 0;
+  width: 2.2ch;
+  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+  font-weight: 900;
+  line-height: 1;
+  color: rgba(215, 226, 234, 0.25);
+  transition: color 0.3s ease;
+}
+
+.hello-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.hello-row-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(215, 226, 234, 0.5);
+}
+
+.hello-row-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(1rem, 1.8vw, 1.35rem);
+  font-weight: 500;
+  color: #d7e2ea;
+  transition: color 0.3s ease;
+}
+
+.hello-row-arrow {
+  margin-left: auto;
+  font-size: 1.2rem;
+  color: rgba(215, 226, 234, 0.35);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease;
+}
+
+.hello-row-link:hover .hello-row-num,
+.hello-row-link:focus-visible .hello-row-num {
+  color: #d7e2ea;
+}
+
+.hello-row-link:hover .hello-row-text,
+.hello-row-link:focus-visible .hello-row-text {
+  transform: translateX(6px);
+}
+
+.hello-row-link:hover .hello-row-value,
+.hello-row-link:focus-visible .hello-row-value {
+  color: #ffffff;
+}
+
+.hello-row-link:hover .hello-row-arrow,
+.hello-row-link:focus-visible .hello-row-arrow {
+  color: #ffffff;
+  transform: translate(3px, -3px) rotate(45deg) scale(1.15);
+}
+
+.hello-row-link:focus-visible {
+  outline: none;
+}
+
+.hello-copy {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(215, 226, 234, 0.18);
+  background: transparent;
+  color: rgba(215, 226, 234, 0.7);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.hello-copy:hover {
+  border-color: rgba(215, 226, 234, 0.45);
+  color: #ffffff;
+}
+
+.hello-copy.is-copied {
+  background: #d7e2ea;
+  border-color: #d7e2ea;
+  color: #0c0c0c;
+}
+
+/* ── Fill-in-the-blanks message form ── */
+.hello-form,
+.hello-sent {
+  padding: 28px;
+  border-radius: 32px;
+  border: 1px solid rgba(215, 226, 234, 0.1);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.015) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+@media (min-width: 768px) {
+  .hello-form,
+  .hello-sent {
+    padding: 36px;
+  }
+}
+
+.hello-sentence {
+  font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+  font-weight: 300;
+  line-height: 1.9;
+  color: rgba(215, 226, 234, 0.85);
+}
+
+.hello-input {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0 4px 2px;
+  border: none;
+  border-bottom: 2px dashed rgba(215, 226, 234, 0.3);
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 500;
+  line-height: 1.3;
+  outline: none;
+  transition: border-color 0.25s ease, width 0.15s ease;
+}
+
+.hello-input::placeholder {
+  color: rgba(215, 226, 234, 0.3);
+  font-style: italic;
+  font-weight: 300;
+}
+
+.hello-input:focus {
+  border-bottom-style: solid;
+  border-bottom-color: #ffffff;
+}
+
+.hello-textarea {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(215, 226, 234, 0.14);
+  background: rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+  font: inherit;
+  font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+  font-weight: 300;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.hello-textarea::placeholder {
+  color: rgba(215, 226, 234, 0.3);
+  font-style: italic;
+}
+
+.hello-textarea:focus {
+  border-color: rgba(215, 226, 234, 0.45);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.hello-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 20px;
+  margin-top: 22px;
+}
+
+.hello-send {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border: none;
+  border-radius: 999px;
+  background: #d7e2ea;
+  color: #0c0c0c;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease;
+}
+
+.hello-send:hover:not(:disabled) {
+  background: #ffffff;
+  transform: translateY(-2px) rotate(-1.5deg);
+}
+
+.hello-send:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+
+.hello-send:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.hello-send-arrow {
+  display: inline-block;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hello-send:hover:not(:disabled) .hello-send-arrow {
+  transform: translate(3px, -3px) rotate(45deg);
+}
+
+.hello-note {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: rgba(215, 226, 234, 0.5);
+}
+
+.hello-note.is-error {
+  color: #fca5a5;
+}
+
+.hello-sent-title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.hello-sent-body {
+  margin-top: 10px;
+  max-width: 34rem;
+  font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+  font-weight: 300;
+  line-height: 1.6;
+  color: rgba(215, 226, 234, 0.75);
+}
+
+/* Hand-off: Gmail / mail app / copy, shown when the message can't post directly */
+.hello-handoff {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  margin-top: 22px;
+}
+
+.hello-handoff .hello-send {
+  text-decoration: none;
+}
+
+.hello-chip {
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(215, 226, 234, 0.22);
+  background: transparent;
+  color: #d7e2ea;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+}
+
+.hello-chip:hover {
+  border-color: rgba(215, 226, 234, 0.5);
+  color: #ffffff;
+}
+
+.hello-chip.is-copied {
+  background: #d7e2ea;
+  border-color: #d7e2ea;
+  color: #0c0c0c;
+}
+
+.hello-link-btn {
+  margin-top: 20px;
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid rgba(215, 226, 234, 0.4);
+  background: none;
+  color: #d7e2ea;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.hello-link-btn:hover {
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+/* ── Footer ── */
+.hello-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 24px;
+  margin-top: 96px;
+  /* Bottom padding clears the fixed music pill (28px + 68px tall) */
+  padding: 24px 0 120px;
+  border-top: 1px solid rgba(215, 226, 234, 0.12);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: rgba(215, 226, 234, 0.45);
+}
+
+.hello-footer-made {
+  font-style: italic;
+}
+
+.hello-top {
+  color: rgba(215, 226, 234, 0.7);
+  text-decoration: none;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: color 0.25s ease;
+}
+
+.hello-top:hover {
+  color: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hello-badge-ring {
+    animation: none;
+  }
+
+  .hello-letter {
+    transition: none;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Hover quirks (QuirkyText). Every one is a hover transition or a one-shot
+   keyframe: nothing runs until someone points at it.
+   Letter vars: --i index, --d distance from the middle, --r jitter (-1..1);
+   word var --w; wrapper var --n letter count.
+   ═══════════════════════════════════════ */
+
+.quirk {
+  cursor: default;
+}
+
+.q-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.q-letter {
+  display: inline-block;
+}
+
+/* SO, WHO AM I? — words shrug, the ? does a confused spin */
+.quirk-shrug .q-word {
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: calc(var(--w) * 60ms);
+}
+
+.quirk-shrug:hover .q-word:nth-child(odd) {
+  transform: translateY(-0.11em) rotate(-4deg);
+}
+
+.quirk-shrug:hover .q-word:nth-child(even) {
+  transform: translateY(0.07em) rotate(4deg);
+}
+
+.quirk-shrug:hover .q-special {
+  animation: qSpin 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) 0.15s both;
+}
+
+@keyframes qSpin {
+  0% {
+    transform: rotate(0);
+  }
+
+  30% {
+    transform: rotate(-28deg) translateY(-0.05em);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ROAD SO FAR — a gentle lean forward, back of the word first */
+.quirk-drive .q-letter {
+  transition: transform 0.5s cubic-bezier(0.34, 1.3, 0.64, 1);
+  transition-delay: calc((var(--n) - var(--i)) * 18ms);
+}
+
+.quirk-drive:hover .q-letter {
+  transform: translateX(0.02em) skewX(-5deg);
+}
+
+/* WHAT I WORK WITH — keys pressed one after another */
+.quirk-press .q-letter {
+  transform-origin: 50% 100%;
+}
+
+.quirk-press:hover .q-letter {
+  animation: qPress 0.42s ease-out both;
+  animation-delay: calc(var(--i) * 45ms);
+}
+
+@keyframes qPress {
+  0%,
+  100% {
+    transform: none;
+  }
+
+  40% {
+    transform: translateY(0.06em) scale(1.04, 0.86);
+  }
+}
+
+/* THINGS I MADE — jelly wobble */
+.quirk-jelly .q-letter {
+  transform-origin: 50% 100%;
+}
+
+.quirk-jelly:hover .q-letter {
+  animation: qJelly 0.9s both;
+  animation-delay: calc(var(--i) * 30ms);
+}
+
+@keyframes qJelly {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+
+  25% {
+    transform: scale(1.18, 0.82);
+  }
+
+  45% {
+    transform: scale(0.88, 1.12);
+  }
+
+  65% {
+    transform: scale(1.06, 0.94);
+  }
+
+  85% {
+    transform: scale(0.98, 1.02);
+  }
+}
+
+/* OUTSIDE THE CODE — letters break out from the middle and tumble */
+.quirk-escape .q-letter {
+  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.quirk-escape:hover .q-letter {
+  transform:
+    translateX(calc(var(--d) * 0.035em))
+    translateY(calc(var(--r) * 0.06em))
+    rotate(calc(var(--r) * 9deg));
+}
+
+/* ── Numbered rows: the big number gives a small tilt-and-lift ── */
+.q-num {
+  transform-origin: 30% 100%;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.q-row:hover .q-num {
+  transform: translateY(-4px) rotate(-3deg);
+}
+
+/* ── Interest row quirks (Outside the Code) ── */
+
+/* MUSIC — letters dance to a beat while you're on the row */
+.q-row:hover .quirk-beat .q-letter {
+  animation: qBeat 0.5s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * 90ms);
+}
+
+@keyframes qBeat {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-0.22em) rotate(calc(var(--r) * 6deg));
+  }
+}
+
+/* GAMING — a quick RGB glitch */
+.q-row:hover .quirk-glitch {
+  display: inline-block;
+  animation: qGlitch 0.5s steps(2, end) both;
+}
+
+@keyframes qGlitch {
+  0%,
+  100% {
+    transform: none;
+    text-shadow: none;
+  }
+
+  20% {
+    transform: translate(-2px, 1px);
+    text-shadow: 2px 0 #ff2bd6, -2px 0 #00e5ff;
+  }
+
+  40% {
+    transform: translate(2px, -1px);
+    text-shadow: -2px 0 #ff2bd6, 2px 0 #00e5ff;
+  }
+
+  60% {
+    transform: translate(-1px, 0);
+    text-shadow: 1px 0 #ff2bd6, -1px 0 #00e5ff;
+  }
+
+  80% {
+    transform: translate(1px, 1px);
+  }
+}
+
+/* ANIME — a sparkle pops in. Space is always reserved, so nothing shifts. */
+.quirk-sparkle::after {
+  content: "✦";
+  display: inline-block;
+  margin-left: 0.35em;
+  color: #b600a8;
+  transform: scale(0) rotate(-120deg);
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.q-row:hover .quirk-sparkle::after {
+  transform: scale(1) rotate(0deg);
+}
+
+/* TECHNOLOGY — a terminal cursor starts blinking */
+.quirk-cursor::after {
+  content: "_";
+  margin-left: 0.08em;
+  opacity: 0;
+}
+
+.q-row:hover .quirk-cursor::after {
+  animation: qCaret 1s steps(1) infinite;
+}
+
+@keyframes qCaret {
+  0%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* BUILDING THINGS — letters get stacked into place, one by one */
+.q-row:hover .quirk-stack .q-letter {
+  animation: qStack 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--i) * 35ms);
+}
+
+@keyframes qStack {
+  0% {
+    transform: none;
+  }
+
+  35% {
+    transform: translateY(-0.45em) rotate(calc(var(--r) * 12deg));
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+/* Footer — the back-to-top arrow hops */
+.hello-top-arrow {
+  display: inline-block;
+}
+
+.hello-top:hover .hello-top-arrow {
+  animation: qRocket 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes qRocket {
+  0%,
+  100% {
+    transform: none;
+  }
+
+  45% {
+    transform: translateY(-6px);
+  }
+
+  70% {
+    transform: translateY(1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quirk .q-word,
+  .quirk .q-letter,
+  .quirk-sparkle::after {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .q-num {
+    transition: none !important;
+  }
+
+  .q-row:hover .q-num {
+    transform: none !important;
+  }
+
+  .q-row:hover .quirk-glitch,
+  .q-row:hover .quirk-cursor::after,
+  .hello-top:hover .hello-top-arrow {
+    animation: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Navbar link quirks (top bar). On hover the label steps aside while a
+   glyph plays over it, then the label comes back. One-shot CSS keyframes
+   (1.3s); leaving mid-way snaps straight back to the label. Sizes are in em,
+   so every glyph scales with the link text.
+   ═══════════════════════════════════════ */
+
+.nav-label {
+  display: inline-block;
+}
+
+.nav-glyph {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: #ffffff;
+}
+
+.ng-q,
+.ng-road-line,
+.ng-road-car,
+.ng-brace,
+.ng-gear,
+.ng-note,
+.ng-hand {
+  opacity: 0;
+}
+
+/* Default: label fades out, glyph performs, label returns */
+.nav-quirk:is(:hover, :focus-visible) .nav-label {
+  animation: navLabelHide 1.3s ease both;
+}
+
+@keyframes navLabelHide {
+  0% {
+    opacity: 1;
+    transform: none;
+  }
+
+  14%,
+  78% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* WHO AM I — a big ? grows out of the middle, wanders while it thinks, leaves */
+.ng-q {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: 1.9em;
+  font-weight: 900;
+  line-height: 1;
+  transform: translate(-50%, -50%) scale(0);
+}
+
+.nq-who:is(:hover, :focus-visible) .ng-q {
+  animation: ngQuestion 1.3s cubic-bezier(0.45, 0, 0.25, 1) both;
+}
+
+@keyframes ngQuestion {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0) rotate(-30deg);
+  }
+
+  18% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1) rotate(0deg);
+  }
+
+  35% {
+    transform: translate(-95%, -62%) scale(1) rotate(-14deg);
+  }
+
+  52% {
+    transform: translate(-5%, -38%) scale(1) rotate(12deg);
+  }
+
+  68% {
+    transform: translate(-62%, -58%) scale(1) rotate(-6deg);
+  }
+
+  82% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0) rotate(20deg);
+  }
+}
+
+/* ROAD SO FAR — a dashed road draws itself and a dot drives along it */
+.ng-road {
+  position: absolute;
+  left: -0.2em;
+  right: -0.2em;
+  top: 50%;
+  height: 0;
+}
+
+.ng-road-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, currentColor 0 0.35em, transparent 0.35em 0.65em);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+.ng-road-car {
+  position: absolute;
+  top: -0.22em;
+  left: 0;
+  width: 0.44em;
+  height: 0.44em;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+.nq-road:is(:hover, :focus-visible) .ng-road-line {
+  animation: ngRoadLine 1.3s ease both;
+}
+
+.nq-road:is(:hover, :focus-visible) .ng-road-car {
+  animation: ngRoadCar 1.3s cubic-bezier(0.5, 0, 0.3, 1) both;
+}
+
+@keyframes ngRoadLine {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  12% {
+    opacity: 0.7;
+  }
+
+  35%,
+  80% {
+    opacity: 0.7;
+    transform: scaleX(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ngRoadCar {
+  0%,
+  15% {
+    opacity: 0;
+    left: 0%;
+  }
+
+  22% {
+    opacity: 1;
+    left: 0%;
+  }
+
+  78% {
+    opacity: 1;
+    left: calc(100% - 0.44em);
+  }
+
+  100% {
+    opacity: 0;
+    left: calc(100% - 0.44em);
+  }
+}
+
+/* SKILLS — { } pop out of the centre, spread, and the label returns inside them */
+.ng-brace {
+  position: absolute;
+  top: 50%;
+  font-size: 1.35em;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ng-brace-l {
+  left: 50%;
+  transform: translate(-50%, -54%);
+}
+
+.ng-brace-r {
+  right: 50%;
+  transform: translate(50%, -54%);
+}
+
+.nq-skills:is(:hover, :focus-visible) .nav-label {
+  animation-name: navLabelInside;
+}
+
+.nq-skills:is(:hover, :focus-visible) .ng-brace-l {
+  animation: ngBraceL 1.3s cubic-bezier(0.34, 1.3, 0.64, 1) both;
+}
+
+.nq-skills:is(:hover, :focus-visible) .ng-brace-r {
+  animation: ngBraceR 1.3s cubic-bezier(0.34, 1.3, 0.64, 1) both;
+}
+
+@keyframes navLabelInside {
+  0% {
+    opacity: 1;
+    transform: none;
+  }
+
+  12%,
+  42% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+
+  62%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ngBraceL {
+  0% {
+    opacity: 0;
+    left: 50%;
+    transform: translate(-50%, -54%) scale(0.3);
+  }
+
+  15% {
+    opacity: 1;
+    left: 50%;
+    transform: translate(-100%, -54%) scale(1);
+  }
+
+  45%,
+  80% {
+    opacity: 1;
+    left: -0.62em;
+    transform: translate(0, -54%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    left: -0.85em;
+    transform: translate(0, -54%) scale(0.8);
+  }
+}
+
+@keyframes ngBraceR {
+  0% {
+    opacity: 0;
+    right: 50%;
+    transform: translate(50%, -54%) scale(0.3);
+  }
+
+  15% {
+    opacity: 1;
+    right: 50%;
+    transform: translate(100%, -54%) scale(1);
+  }
+
+  45%,
+  80% {
+    opacity: 1;
+    right: -0.62em;
+    transform: translate(0, -54%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    right: -0.85em;
+    transform: translate(0, -54%) scale(0.8);
+  }
+}
+
+/* THINGS I MADE — two gears spin in, meshing in opposite directions */
+.ng-gear {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+
+.ng-gear-a {
+  width: 1.5em;
+  height: 1.5em;
+  margin: -0.95em 0 0 -1.15em;
+}
+
+.ng-gear-b {
+  width: 1em;
+  height: 1em;
+  margin: -0.15em 0 0 0.12em;
+}
+
+.nq-made:is(:hover, :focus-visible) .ng-gear-a {
+  animation: ngGearA 1.3s ease-in-out both;
+}
+
+.nq-made:is(:hover, :focus-visible) .ng-gear-b {
+  animation: ngGearB 1.3s ease-in-out both;
+}
+
+/* The small gear turns 1.5× as far, like meshing teeth */
+@keyframes ngGearA {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+
+  18% {
+    opacity: 1;
+    transform: scale(1) rotate(60deg);
+  }
+
+  80% {
+    opacity: 1;
+    transform: scale(1) rotate(300deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(360deg);
+  }
+}
+
+@keyframes ngGearB {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+
+  22% {
+    opacity: 1;
+    transform: scale(1) rotate(-90deg);
+  }
+
+  80% {
+    opacity: 1;
+    transform: scale(1) rotate(-450deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(-540deg);
+  }
+}
+
+/* OUTSIDE THE CODE — music notes float up on different arcs; the label only dims */
+.ng-note {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: 1.25em;
+  line-height: 1;
+}
+
+.ng-note-1 {
+  --x: -1.5em;
+  --rot: -18deg;
+}
+
+.ng-note-2 {
+  --x: 0.2em;
+  --rot: 10deg;
+}
+
+.ng-note-3 {
+  --x: 1.6em;
+  --rot: 22deg;
+}
+
+.nq-outside:is(:hover, :focus-visible) .nav-label {
+  animation-name: navLabelDim;
+}
+
+.nq-outside:is(:hover, :focus-visible) .ng-note {
+  animation: ngNote 1.2s ease-out both;
+}
+
+.nq-outside:is(:hover, :focus-visible) .ng-note-2 {
+  animation-delay: 0.14s;
+}
+
+.nq-outside:is(:hover, :focus-visible) .ng-note-3 {
+  animation-delay: 0.28s;
+}
+
+@keyframes navLabelDim {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  12%,
+  75% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes ngNote {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -30%) scale(0.4);
+  }
+
+  20% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--x) * 0.3), -90%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--x)), -230%) rotate(var(--rot)) scale(0.9);
+  }
+}
+
+/* SAY HELLO — a hand waves hello */
+.ng-hand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.6em;
+  height: 1.6em;
+  margin: -0.8em 0 0 -0.8em;
+  transform-origin: 65% 90%;
+}
+
+.nq-hello:is(:hover, :focus-visible) .ng-hand {
+  animation: ngWave 1.3s ease-in-out both;
+}
+
+@keyframes ngWave {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-20deg);
+  }
+
+  15% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  30% {
+    transform: scale(1) rotate(22deg);
+  }
+
+  45% {
+    transform: scale(1) rotate(-8deg);
+  }
+
+  60% {
+    transform: scale(1) rotate(22deg);
+  }
+
+  75% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  85% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(10deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-quirk .nav-label,
+  .nav-quirk .nav-glyph * {
+    animation: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Outside the Code: cursor-following video window
+   ═══════════════════════════════════════ */
+
+.interest-preview {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 45;
+  width: clamp(300px, 36vw, 600px);
+  aspect-ratio: 16 / 10;
+  border-radius: 28px;
+  overflow: hidden;
+  pointer-events: none;
+  background: #0c0c0c;
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.35),
+    0 10px 24px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.interest-preview-clip {
+  position: absolute;
+  inset: 0;
+}
+
+.interest-preview-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Gentle vignette so the label reads over any clip */
+.interest-preview-clip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.45) 100%);
+  pointer-events: none;
+}
+
+.interest-preview-label {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6%;
+  text-align: center;
+  font-size: clamp(2.2rem, 5.2vw, 5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
 }

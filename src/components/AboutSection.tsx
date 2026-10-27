@@ -1,4 +1,5 @@
 import FadeIn from './FadeIn';
+import QuirkyText from './QuirkyText';
 import AnimatedText from './AnimatedText';
 
 
@@ -13,7 +14,7 @@ export default function AboutSection() {
     >
       <FadeIn delay={0.1} x={-80} y={0} duration={0.9} className="absolute left-[2%] top-[4%] lg:left-[4%] hidden md:block z-0 pointer-events-none">
         <img
-          src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png"
+          src="/about/moon.webp"
           alt=""
           className="w-[12vw] max-w-[210px] select-none"
           draggable={false}
@@ -22,7 +23,7 @@ export default function AboutSection() {
 
       <FadeIn delay={0.25} x={-80} y={0} duration={0.9} className="absolute bottom-[8%] left-[2%] lg:left-[8%] hidden md:block z-0 pointer-events-none">
         <img
-          src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/p59_1.4659672e.png"
+          src="/about/sticker.webp"
           alt=""
           className="w-[10vw] max-w-[180px] select-none"
           draggable={false}
@@ -31,7 +32,7 @@ export default function AboutSection() {
 
       <FadeIn delay={0.15} x={80} y={0} duration={0.9} className="absolute right-[2%] top-[4%] lg:right-[4%] hidden md:block z-0 pointer-events-none">
         <img
-          src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/lego_icon-1.703bb594.png"
+          src="/about/lego.webp"
           alt=""
           className="w-[12vw] max-w-[210px] select-none"
           draggable={false}
@@ -40,7 +41,7 @@ export default function AboutSection() {
 
       <FadeIn delay={0.3} x={80} y={0} duration={0.9} className="absolute bottom-[8%] right-[2%] lg:right-[8%] hidden md:block z-0 pointer-events-none">
         <img
-          src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/Group_134-1.2e04f3ce.png"
+          src="/about/group.webp"
           alt=""
           className="w-[13vw] max-w-[220px] select-none"
           draggable={false}
@@ -52,10 +53,10 @@ export default function AboutSection() {
           delay={0}
           y={40}
           as="h2"
-          className="hero-heading text-center font-black uppercase leading-none tracking-tight"
+          className="text-center font-black uppercase leading-none tracking-tight"
           style={{ fontSize: 'clamp(3rem, 9.5vw, 150px)' }}
         >
-          SO, WHO AM I?
+          <QuirkyText text="SO, WHO AM I?" variant="quirk-shrug" letterClassName="hero-heading" special="?" />
         </FadeIn>
 
         <AnimatedText

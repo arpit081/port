@@ -24,3 +24,7 @@ dist-ssr
 
 opencode.json
 .env.*
+
+# AI design-tool skills (not part of the site)
+.agents/
+skills-lock.json
