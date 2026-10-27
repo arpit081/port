@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import FadeIn from './FadeIn';
 import ContactForm from './contact/ContactForm';
-import { smoothScrollTo } from '@/lib/utils';
+import { RESUME_FILENAME, RESUME_URL, smoothScrollTo } from '@/lib/utils';
 
 type Contact = {
   label: string;
@@ -10,6 +10,8 @@ type Contact = {
   external?: boolean;
   /** Text to copy, for details people usually paste somewhere */
   copy?: string;
+  /** Filename to save as: adds a Download button next to the row */
+  download?: string;
 };
 
 const CONTACTS: Contact[] = [
@@ -18,6 +20,7 @@ const CONTACTS: Contact[] = [
   { label: 'WhatsApp', value: 'Same number, faster replies', href: 'https://wa.me/919933278740', external: true },
   { label: 'LinkedIn', value: 'in/arpit-mishra', href: 'https://www.linkedin.com/in/arpit-mishra-9b2b5b279/', external: true },
   { label: 'GitHub', value: '@arpit081', href: 'https://github.com/arpit081', external: true },
+  { label: 'Resume', value: 'One page, PDF', href: RESUME_URL, external: true, download: RESUME_FILENAME },
 ];
 
 const HEADING = 'SAY HELLO';
@@ -60,6 +63,11 @@ function ContactRow({ contact, index }: { contact: Contact; index: number }) {
         >
           {copied ? 'Copied' : 'Copy'}
         </button>
+      )}
+      {contact.download && (
+        <a className="hello-copy" href={contact.href} download={contact.download} aria-label={`Download ${contact.label.toLowerCase()} (PDF)`}>
+          Download
+        </a>
       )}
     </li>
   );

@@ -3,6 +3,7 @@ import FadeIn from './FadeIn';
 import MusicPlayer from './MusicPlayer';
 import HeroLens from './HeroLens';
 import ScrollCue from './ScrollCue';
+import { RESUME_URL } from '@/lib/utils';
 
 const HEADING_CLASS = 'hero-heading w-full whitespace-nowrap text-center text-[14vw] font-black uppercase leading-none tracking-tight sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw]';
 const INTRO_CLASS = 'max-w-[240px] sm:max-w-[320px] md:max-w-[400px]';
@@ -14,6 +15,7 @@ const INTRO_CLASS = 'max-w-[240px] sm:max-w-[320px] md:max-w-[400px]';
  */
 function HeroCopy({ replica = false }: { replica?: boolean }) {
   const heading = <>Hi, i&apos;m arpit</>;
+  const resumeLabel = <>View resume <span className="hero-resume-arrow" aria-hidden="true">↗</span></>;
   const intro = (
     <>
       <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#D7E2EA] sm:text-sm">
@@ -28,6 +30,14 @@ function HeroCopy({ replica = false }: { replica?: boolean }) {
       <p className="mt-3 text-xs font-light text-[#D7E2EA]/70 sm:text-sm">
         Mostly interested in the space where AI, software and good ideas collide.
       </p>
+      {/* The lens copy only draws it; the real link sits underneath */}
+      {replica ? (
+        <span className="hero-resume">{resumeLabel}</span>
+      ) : (
+        <a className="hero-resume" href={RESUME_URL} target="_blank" rel="noopener noreferrer" aria-label="View resume (PDF, opens in a new tab)">
+          {resumeLabel}
+        </a>
+      )}
     </>
   );
 

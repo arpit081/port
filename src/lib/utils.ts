@@ -5,6 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/** The resume lives in public/; replace that file to update it everywhere */
+export const RESUME_URL = "/arpit-mishra-resume.pdf"
+export const RESUME_FILENAME = "Arpit-Mishra-Resume.pdf"
+
 /** Eased scroll to a section by id (easeInOutCubic, 800ms). Returns false if not found. */
 export function smoothScrollTo(id: string, duration = 800) {
   const target = document.getElementById(id)
