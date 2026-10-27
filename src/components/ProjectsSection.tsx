@@ -156,7 +156,8 @@ function ProjectCard({
   return (
     <motion.article
       ref={cardRef}
-      className="relative flex h-[80vh] flex-col overflow-hidden rounded-[40px] border-2 border-[#D7E2EA] bg-[#0C0C0C] p-4 sm:rounded-[50px] sm:p-6 md:rounded-[60px] md:p-8"
+      // short: (landscape phones) compact header so the images keep some room
+      className="relative flex h-[80vh] flex-col overflow-hidden rounded-[40px] border-2 border-[#D7E2EA] bg-[#0C0C0C] p-4 sm:rounded-[50px] sm:p-6 md:rounded-[60px] md:p-8 short:!rounded-[32px] short:!p-4"
       style={{
         y,
         scale,
@@ -167,16 +168,16 @@ function ProjectCard({
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="flex items-start gap-4 sm:gap-8">
-          <span className="font-black leading-none text-[#D7E2EA]" style={{ fontSize: 'clamp(3rem, 10vw, 140px)' }}>{project.number}</span>
-          <div className="pt-2 sm:pt-5">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#D7E2EA]/60 sm:text-sm">{project.category}</p>
-            <h3 className="mt-1 max-w-[320px] text-lg font-medium uppercase leading-tight text-[#D7E2EA] sm:max-w-none sm:text-2xl md:text-3xl">{project.name}</h3>
-            <p className="mt-2 hidden max-w-[400px] text-sm text-[#D7E2EA]/80 sm:block">{project.description}</p>
+          <span className="font-black leading-none text-[#D7E2EA] short:!text-5xl" style={{ fontSize: 'clamp(3rem, 10vw, 140px)' }}>{project.number}</span>
+          <div className="pt-2 sm:pt-5 short:!pt-1">
+            <p className="text-xs uppercase tracking-[0.3em] text-[#D7E2EA]/60 sm:text-sm short:!text-[10px]">{project.category}</p>
+            <h3 className="mt-1 max-w-[20rem] text-lg font-medium uppercase leading-tight text-[#D7E2EA] sm:max-w-none sm:text-2xl md:text-3xl short:!text-lg">{project.name}</h3>
+            <p className="mt-2 hidden max-w-[25rem] text-sm text-[#D7E2EA]/80 sm:block short:!hidden">{project.description}</p>
           </div>
         </div>
         <LiveProjectButton href={project.repo} label={project.name} className="self-start sm:self-auto shrink-0 px-4 py-2 text-[10px] sm:px-6 sm:py-2.5 sm:text-xs md:px-8 md:py-3 md:text-sm" />
       </div>
-      <div className="mt-5 grid min-h-0 flex-1 grid-cols-[40%_60%] gap-2 sm:mt-8 sm:gap-3">
+      <div className="mt-5 grid min-h-0 flex-1 grid-cols-[2fr_3fr] gap-2 sm:mt-8 sm:gap-3 short:!mt-3">
         <div className="flex min-h-0 flex-col gap-2 sm:gap-3">
           <img src={project.images[0].src} alt={project.images[0].alt} loading="lazy" decoding="async" className="min-h-0 w-full flex-1 bg-[#07070a] object-contain rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
           <img src={project.images[1].src} alt={project.images[1].alt} loading="lazy" decoding="async" className="min-h-0 w-full flex-[1.35] bg-[#07070a] object-contain rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />

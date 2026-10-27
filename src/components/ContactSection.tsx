@@ -26,6 +26,13 @@ const CONTACTS: Contact[] = [
 const HEADING = 'SAY HELLO';
 const BADGE_TEXT = 'OPEN TO WORK ✦ OPEN TO IDEAS ✦ OPEN TO CHAI ✦ ';
 
+/** Lets an email address wrap after the "@" on narrow phones, not mid-word */
+function breakAfterAt(value: string) {
+  const at = value.indexOf('@');
+  if (at <= 0) return value;
+  return <>{value.slice(0, at + 1)}<wbr />{value.slice(at + 1)}</>;
+}
+
 function ContactRow({ contact, index }: { contact: Contact; index: number }) {
   const [copied, setCopied] = useState(false);
 
@@ -50,7 +57,7 @@ function ContactRow({ contact, index }: { contact: Contact; index: number }) {
         <span className="hello-row-num">{String(index + 1).padStart(2, '0')}</span>
         <span className="hello-row-text">
           <span className="hello-row-label">{contact.label}</span>
-          <span className="hello-row-value">{contact.value}</span>
+          <span className="hello-row-value">{breakAfterAt(contact.value)}</span>
         </span>
         <span className="hello-row-arrow" aria-hidden="true">↗</span>
       </a>
@@ -98,7 +105,9 @@ export default function ContactSection() {
           </p>
         </FadeIn>
 
-        <div className="grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+        {/* minmax(0, …): a plain 1fr column grows to fit its widest content (the
+            email row), pushing the rows and the form past a phone's edge */}
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16">
           <FadeIn y={30} delay={0.1}>
             <ul className="hello-rows">
               {CONTACTS.map((c, i) => <ContactRow key={c.label} contact={c} index={i} />)}

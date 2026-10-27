@@ -15,6 +15,15 @@ body,
   font-family: 'Kanit', sans-serif;
 }
 
+/* Big monitors: everything sized in rem (text, spacing, section widths) grows
+   with the window past 1920px, so a 2560px screen isn't a laptop layout
+   floating in empty space. 16px at 1920, ~21px at 2560, capped at 22px. */
+@media (min-width: 1921px) {
+  html {
+    font-size: min(calc(100vw / 120), 22px);
+  }
+}
+
 .hero-heading {
   background: linear-gradient(180deg, #646973 0%, #bbccd7 100%);
   -webkit-background-clip: text;
@@ -150,6 +159,17 @@ body,
   }
 }
 
+/* Landscape phones: the intro fills the bottom-left, so the cue goes back to
+   the right edge (the music button takes the empty space above it) */
+@media (max-height: 500px) and (min-width: 768px) {
+  .scroll-cue {
+    left: auto;
+    right: 24px;
+    bottom: 24px;
+    transform: none;
+  }
+}
+
 .scroll-cue:hover {
   color: rgba(255, 255, 255, 0.9);
 }
@@ -256,6 +276,18 @@ body,
   }
 }
 
+/* Landscape phones: there's no room between the headline and the intro, so
+   the button moves to the empty space right of the intro, above the scroll cue
+   (open, the card is centred at the bottom below 1024px anyway) */
+@media (max-height: 500px) and (min-width: 641px) and (max-width: 1023px) {
+  .music-btn-anchor {
+    left: auto;
+    /* the anchor has no width; the 56px button hangs off its left edge */
+    right: calc(6% + 56px);
+    bottom: 26%;
+  }
+}
+
 .music-player-unified {
   position: absolute;
   bottom: 0;
@@ -350,16 +382,43 @@ body,
   height: min(460px, calc(100dvh - 56px));
 }
 
+/* Below 1024px the open card is centred at the bottom (see above). This
+   repeats it for the scrolled state, whose rule is more specific and would
+   otherwise pin a 330px card at left: 28px, past the edge of small phones */
+@media (max-width: 1023px) {
+  .music-player-unified.is-fixed[data-open="true"] {
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: calc(100% - 32px);
+    max-width: 330px;
+    height: 440px;
+    height: min(440px, calc(100vh - 32px));
+    height: min(440px, calc(100dvh - 32px));
+  }
+}
+
 /* When scrolled and closed (the Pill mode) */
 .music-player-unified.is-pill {
   bottom: 28px;
   left: 28px;
-  width: 340px;
+  /* Shrinks on small phones instead of running off the right edge */
+  width: min(340px, calc(100vw - 56px));
   height: 68px;
   border-radius: 999px;
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3),
     0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Small phones: hug the edges a little closer so the pill keeps its width */
+@media (max-width: 400px) {
+  .music-player-unified.is-pill {
+    left: 16px;
+    bottom: 16px;
+    width: min(340px, calc(100vw - 32px));
+  }
 }
 
 /* The pill's own glass surface */
@@ -2331,6 +2390,39 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
 
 .hello-top:hover {
   color: #ffffff;
+}
+
+/* Narrow phones: values wrap instead of truncating (the email stays readable),
+   and rows with a Copy/Download button drop the arrow to make room */
+@media (max-width: 420px) {
+  .hello-row-value {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .hello-row-link:has(+ .hello-copy) .hello-row-arrow {
+    display: none;
+  }
+}
+
+/* Touch screens: bring the small controls up to a comfortable ~40px target */
+@media (pointer: coarse) {
+  .hello-copy {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 14px;
+  }
+
+  .hello-input {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .hello-top {
+    display: inline-block;
+    padding: 12px 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

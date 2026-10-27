@@ -6,7 +6,8 @@ import ScrollCue from './ScrollCue';
 import { RESUME_URL } from '@/lib/utils';
 
 const HEADING_CLASS = 'hero-heading w-full whitespace-nowrap text-center text-[14vw] font-black uppercase leading-none tracking-tight sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw]';
-const INTRO_CLASS = 'max-w-[240px] sm:max-w-[320px] md:max-w-[400px]';
+// rem, not px, so the intro scales with the root size on big monitors
+const INTRO_CLASS = 'max-w-[15rem] sm:max-w-[20rem] md:max-w-[25rem]';
 
 /**
  * The hero's text layout. Rendered twice: once on the page (with entrance
