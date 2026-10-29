@@ -134,16 +134,9 @@ export default function MusicPlayer() {
         }}
         onLayoutAnimationStart={() => setIsMorphing(true)}
         onLayoutAnimationComplete={() => setIsMorphing(false)}
-        animate={{
-          y: isHero ? [0, -5, 0] : 0,
-          rotate: isHero ? [0, 0.8, 0] : 0,
-        }}
-        transition={{
-          layout: SPRING,
-          default: SPRING,
-          y: isHero ? { repeat: Infinity, duration: 3.5, ease: "easeInOut" } : SPRING,
-          rotate: isHero ? { repeat: Infinity, duration: 3.5, ease: "easeInOut" } : SPRING,
-        }}
+        // The hero button's idle bob is a CSS keyframe on .music-btn-anchor
+        // (compositor); a repeating animate here restyled it on the main thread
+        transition={{ layout: SPRING, default: SPRING }}
       >
         {shellGlass.lens}
         <div className="music-player-clip">

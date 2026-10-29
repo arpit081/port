@@ -60,7 +60,7 @@ function NavGlyph({ quirk }: { quirk: NavQuirk }) {
 }
 
 export default function Navbar() {
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   // Lenses stay hidden until each panel's entrance animation has settled
@@ -72,6 +72,44 @@ export default function Navbar() {
   // Click anywhere outside the open menu to close it, like the music card
   const rootRef = useRef<HTMLDivElement | null>(null);
   useDismiss(isScrolled && isOpen, rootRef, () => setIsOpen(false));
+
+  // Which section is on screen, for the open menu's highlight. Watched only
+  // while the menu is open; the observer reports the current one on start.
+  const [activeId, setActiveId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) if (e.isIntersecting) setActiveId(e.target.id);
+      },
+      // a thin band across the middle of the screen
+      { rootMargin: '-45% 0px -54% 0px' },
+    );
+    for (const { href } of navLinks) {
+      const el = document.getElementById(href.slice(1));
+      if (el) io.observe(el);
+    }
+    return () => io.disconnect();
+  }, [isOpen]);
+
+  // Over a white section the dot turns light (one observer on a thin band
+  // where the dot sits, at the top of the screen)
+  const [onLight, setOnLight] = useState(false);
+  useEffect(() => {
+    const lit = new Set<Element>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) lit.add(e.target);
+          else lit.delete(e.target);
+        }
+        setOnLight(lit.size > 0);
+      },
+      { rootMargin: '-24px 0px -91% 0px' },
+    );
+    document.querySelectorAll('#road-so-far, #interests, .reveal-footer').forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
   // Escape closes the open menu
   useEffect(() => {
@@ -169,7 +207,7 @@ export default function Navbar() {
                     key="dot"
                     ref={dotGlass.ref}
                     onClick={() => setIsOpen(true)}
-                    className="nav-shell lg-rim absolute top-0 left-0 w-12 h-12 flex items-center justify-center rounded-full text-white/70 hover:text-white transition-colors z-20"
+                    className={`nav-shell lg-rim ${onLight ? 'on-light' : ''} absolute top-0 left-0 w-12 h-12 flex items-center justify-center rounded-full text-white/70 hover:text-white transition-colors z-20`}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
@@ -181,6 +219,11 @@ export default function Navbar() {
                   >
                     {dotGlass.lens}
                     <span className="nav-glass" aria-hidden="true" />
+                    {/* How far down the page you are, traced around the dot */}
+                    <svg className="nav-progress" viewBox="0 0 48 48" aria-hidden="true">
+                      <circle className="nav-progress-track" cx="24" cy="24" r="22" />
+                      <motion.circle className="nav-progress-bar" cx="24" cy="24" r="22" style={{ pathLength: scrollYProgress }} />
+                    </svg>
                     <span className="relative flex">
                       <Menu size={20} />
                     </span>
@@ -222,7 +265,8 @@ export default function Navbar() {
                           key={link.label}
                           href={link.href}
                           onClick={(e) => handleScroll(e, link.href)}
-                          className="group text-sm font-medium uppercase tracking-wider text-[#D7E2EA]"
+                          aria-current={activeId === link.href.slice(1) ? 'location' : undefined}
+                          className="nav-menu-link group text-sm font-medium uppercase tracking-wider text-[#D7E2EA]"
                         >
                           <span className="relative inline-block transition-transform duration-300 ease-out group-hover:translate-x-2 origin-left">
                             {link.hoverLabel ? (

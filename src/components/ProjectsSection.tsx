@@ -1,8 +1,10 @@
 import { useRef, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import FadeIn from './FadeIn';
 import QuirkyText from './QuirkyText';
 import LiveProjectButton from './LiveProjectButton';
+import SectionDepth from './SectionDepth';
+import { useTilt } from '@/lib/useTilt';
 
 // Images in public/projects are designed in HTML and rendered to WebP at 2x their
 // on-card size: python scripts/project-images/gen.py, then render.py public/projects.
@@ -151,13 +153,20 @@ function ProjectCard({
     scaleRange,
     isLast ? [1, 1] : [1, targetScale],
   );
+  // Buried cards darken as they shrink, so the stack reads as depth
+  const shade = useTransform(scrollYProgress, scaleRange, isLast ? [0, 0] : [0, 0.5]);
+  // Images unmask the first time the card is a quarter on screen
+  const seen = useInView(cardRef, { once: true, amount: 0.25 });
+  const tilt0 = useTilt<HTMLImageElement>();
+  const tilt1 = useTilt<HTMLImageElement>();
+  const tilt2 = useTilt<HTMLImageElement>();
 
   /* ---- render ---- */
   return (
     <motion.article
       ref={cardRef}
       // short: (landscape phones) compact header so the images keep some room
-      className="relative flex h-[80vh] flex-col overflow-hidden rounded-[40px] border-2 border-[#D7E2EA] bg-[#0C0C0C] p-4 sm:rounded-[50px] sm:p-6 md:rounded-[60px] md:p-8 short:!rounded-[32px] short:!p-4"
+      className={`${seen ? 'is-seen' : ''} relative flex h-[80vh] flex-col overflow-hidden rounded-[40px] border-2 border-[#D7E2EA] bg-[#0C0C0C] p-4 sm:rounded-[50px] sm:p-6 md:rounded-[60px] md:p-8 short:!rounded-[32px] short:!p-4`}
       style={{
         y,
         scale,
@@ -179,11 +188,12 @@ function ProjectCard({
       </div>
       <div className="mt-5 grid min-h-0 flex-1 grid-cols-[2fr_3fr] gap-2 sm:mt-8 sm:gap-3 short:!mt-3">
         <div className="flex min-h-0 flex-col gap-2 sm:gap-3">
-          <img src={project.images[0].src} alt={project.images[0].alt} loading="lazy" decoding="async" className="min-h-0 w-full flex-1 bg-[#07070a] object-contain rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
-          <img src={project.images[1].src} alt={project.images[1].alt} loading="lazy" decoding="async" className="min-h-0 w-full flex-[1.35] bg-[#07070a] object-contain rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
+          <img ref={tilt0} src={project.images[0].src} alt={project.images[0].alt} loading="lazy" decoding="async" style={{ animationDelay: '0.1s' }} className="tilt img-reveal min-h-0 w-full flex-1 bg-[#07070a] object-contain rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
+          <img ref={tilt1} src={project.images[1].src} alt={project.images[1].alt} loading="lazy" decoding="async" style={{ animationDelay: '0.22s' }} className="tilt img-reveal min-h-0 w-full flex-[1.35] bg-[#07070a] object-contain rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
         </div>
-        <img src={project.images[2].src} alt={project.images[2].alt} loading="lazy" decoding="async" className="h-full min-h-0 w-full bg-[#07070a] object-contain rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
+        <img ref={tilt2} src={project.images[2].src} alt={project.images[2].alt} loading="lazy" decoding="async" style={{ animationDelay: '0s' }} className="tilt img-reveal h-full min-h-0 w-full bg-[#07070a] object-contain rounded-[30px] sm:rounded-[40px] md:rounded-[50px]" />
       </div>
+      <motion.span className="card-shade" style={{ opacity: shade }} aria-hidden="true" />
     </motion.article>
   );
 }
@@ -194,14 +204,14 @@ export default function ProjectsSection() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section id="projects" className="relative z-10 -mt-10 rounded-t-[40px] bg-[#0C0C0C] px-5 pt-20 pb-24 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 sm:pt-24 sm:pb-32 md:-mt-14 md:rounded-t-[60px] md:px-10 md:pt-32 md:pb-40">
+    <SectionDepth id="projects" className="grain relative z-10 -mt-10 rounded-t-[40px] bg-[#0C0C0C] px-5 pt-20 pb-24 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 sm:pt-24 sm:pb-32 md:-mt-14 md:rounded-t-[60px] md:px-10 md:pt-32 md:pb-40">
       <FadeIn
         y={40}
         as="h2"
         className="mb-8 text-center font-black uppercase leading-none tracking-tight sm:mb-10 md:mb-14"
         style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
       >
-        <QuirkyText text="THINGS I MADE" variant="quirk-jelly" letterClassName="hero-heading" />
+        <QuirkyText text="THINGS I MADE" variant="quirk-jelly" letterClassName="hero-heading" reveal />
       </FadeIn>
       <FadeIn y={30} delay={0.2} className="mx-auto mb-16 max-w-2xl text-center sm:mb-20 md:mb-24">
         <p className="text-sm font-light leading-relaxed text-[#D7E2EA]/70 sm:text-base md:text-lg">
@@ -213,6 +223,6 @@ export default function ProjectsSection() {
           <ProjectCard key={project.number} project={project} index={index} containerRef={containerRef} />
         ))}
       </div>
-    </section>
+    </SectionDepth>
   );
 }

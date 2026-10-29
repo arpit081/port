@@ -8,6 +8,8 @@ import SkillsSection from '@/components/SkillsSection';
 import ProjectsSection from '@/components/ProjectsSection';
 import ServicesSection from '@/components/ServicesSection';
 import ContactSection from '@/components/ContactSection';
+import RevealFooter from '@/components/RevealFooter';
+import Cursor from '@/components/Cursor';
 import { MusicPlayerProvider } from '@/context/MusicPlayerContext';
 
 function App() {
@@ -33,7 +35,7 @@ function App() {
   }, []);
   return (
     <MusicPlayerProvider>
-      <main className="min-h-screen overflow-x-clip bg-[#0C0C0C]">
+      <main className="grain min-h-screen overflow-x-clip bg-[#0C0C0C]">
         <Navbar />
         <HeroSection />
         <AboutSection />
@@ -42,6 +44,8 @@ function App() {
         <ProjectsSection />
         <ServicesSection />
         <ContactSection />
+        <RevealFooter />
+        <Cursor />
       </main>
     </MusicPlayerProvider>
   );

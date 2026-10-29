@@ -8,6 +8,7 @@ import ApiTerminal from './skills/ApiTerminal';
 import UiPlayground from './skills/UiPlayground';
 import ToolsGrid from './skills/ToolsGrid';
 import type { ToolGroup } from './skills/ToolsGrid';
+import SectionDepth from './SectionDepth';
 
 // Everything from the resume's Technical Skills, plus the stack named on its projects
 const AI_SKILLS = [
@@ -30,10 +31,10 @@ export default function SkillsSection() {
   const isLive = useInView(sectionRef, { margin: '200px' });
 
   return (
-    <section
-      ref={sectionRef}
+    <SectionDepth
+      sectionRef={sectionRef}
       id="skills"
-      className={`skills-section relative z-10 -mt-10 overflow-hidden rounded-t-[40px] bg-[#0C0C0C] px-5 pt-20 pb-36 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 sm:pt-24 sm:pb-44 md:-mt-14 md:rounded-t-[60px] md:px-10 md:pt-32 md:pb-52 ${isLive ? 'is-live' : ''}`}
+      className={`skills-section grain relative z-10 -mt-10 overflow-hidden rounded-t-[40px] bg-[#0C0C0C] px-5 pt-20 pb-36 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 sm:pt-24 sm:pb-44 md:-mt-14 md:rounded-t-[60px] md:px-10 md:pt-32 md:pb-52 ${isLive ? 'is-live' : ''}`}
     >
       {/* Slow-drifting colour behind the glass — what the refraction bends */}
       <div className="skills-aurora" aria-hidden="true">
@@ -50,7 +51,7 @@ export default function SkillsSection() {
           className="mb-8 text-center font-black uppercase leading-none tracking-tight [text-wrap:balance] sm:mb-10 md:mb-14"
           style={{ fontSize: 'clamp(3rem, 11vw, 150px)' }}
         >
-          <QuirkyText text="WHAT I WORK WITH" variant="quirk-press" letterClassName="hero-heading" />
+          <QuirkyText text="WHAT I WORK WITH" variant="quirk-press" letterClassName="hero-heading" reveal />
         </FadeIn>
         <FadeIn y={30} delay={0.2} className="mx-auto mb-14 max-w-2xl text-center sm:mb-16 md:mb-20">
           <p className="text-sm font-light leading-relaxed text-[#D7E2EA]/70 sm:text-base md:text-lg">
@@ -100,6 +101,6 @@ export default function SkillsSection() {
           </SkillTile>
         </div>
       </div>
-    </section>
+    </SectionDepth>
   );
 }

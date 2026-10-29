@@ -1,19 +1,36 @@
+import { useRef } from 'react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import FadeIn from './FadeIn';
 import QuirkyText from './QuirkyText';
 import AnimatedText from './AnimatedText';
+import SectionDepth from './SectionDepth';
 
 
 const aboutText =
   "I'm Arpit — I like taking random ideas and seeing how far I can take them.\n\nMost of what I build sits somewhere around AI, software and backend systems. I like figuring out how things work, trying things that probably shouldn't work, and occasionally ending up with something surprisingly useful.\n\nI tend to go down very specific rabbit holes. Sometimes they turn into projects. Sometimes they just leave me with a new thing to obsess over.";
 
 export default function AboutSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  // Stickers drift at different speeds while the section passes (parallax)
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
+  const range = (px: number) => [reduce ? 0 : px, reduce ? 0 : -px];
+  const drift = [
+    useTransform(scrollYProgress, [0, 1], range(60)),
+    useTransform(scrollYProgress, [0, 1], range(110)),
+    useTransform(scrollYProgress, [0, 1], range(40)),
+    useTransform(scrollYProgress, [0, 1], range(90)),
+  ];
+
   return (
-    <section
+    <SectionDepth
+      sectionRef={sectionRef}
       id="about"
       className="relative flex min-h-screen flex-col items-center justify-center px-5 py-20 sm:px-8 md:px-10"
     >
       <FadeIn delay={0.1} x={-80} y={0} duration={0.9} className="absolute left-[2%] top-[4%] lg:left-[4%] hidden md:block z-0 pointer-events-none">
-        <img
+        <motion.img
+          style={{ y: drift[0] }}
           src="/about/moon.webp"
           alt=""
           className="w-[12vw] max-w-[210px] select-none"
@@ -22,7 +39,8 @@ export default function AboutSection() {
       </FadeIn>
 
       <FadeIn delay={0.25} x={-80} y={0} duration={0.9} className="absolute bottom-[8%] left-[2%] lg:left-[8%] hidden md:block z-0 pointer-events-none">
-        <img
+        <motion.img
+          style={{ y: drift[1] }}
           src="/about/sticker.webp"
           alt=""
           className="w-[10vw] max-w-[180px] select-none"
@@ -31,7 +49,8 @@ export default function AboutSection() {
       </FadeIn>
 
       <FadeIn delay={0.15} x={80} y={0} duration={0.9} className="absolute right-[2%] top-[4%] lg:right-[4%] hidden md:block z-0 pointer-events-none">
-        <img
+        <motion.img
+          style={{ y: drift[2] }}
           src="/about/lego.webp"
           alt=""
           className="w-[12vw] max-w-[210px] select-none"
@@ -40,7 +59,8 @@ export default function AboutSection() {
       </FadeIn>
 
       <FadeIn delay={0.3} x={80} y={0} duration={0.9} className="absolute bottom-[8%] right-[2%] lg:right-[8%] hidden md:block z-0 pointer-events-none">
-        <img
+        <motion.img
+          style={{ y: drift[3] }}
           src="/about/group.webp"
           alt=""
           className="w-[13vw] max-w-[220px] select-none"
@@ -56,7 +76,7 @@ export default function AboutSection() {
           className="text-center font-black uppercase leading-none tracking-tight"
           style={{ fontSize: 'clamp(3rem, 9.5vw, 150px)' }}
         >
-          <QuirkyText text="SO, WHO AM I?" variant="quirk-shrug" letterClassName="hero-heading" special="?" />
+          <QuirkyText text="SO, WHO AM I?" variant="quirk-shrug" letterClassName="hero-heading" special="?" reveal />
         </FadeIn>
 
         <AnimatedText
@@ -69,6 +89,6 @@ export default function AboutSection() {
 
       <div className="mt-16 sm:mt-20 md:mt-24">
       </div>
-    </section>
+    </SectionDepth>
   );
 }

@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useMagnetic } from '@/lib/useMagnetic';
+import RollText from '../RollText';
+import { burst } from '@/lib/burst';
 
 const TO_EMAIL = 'arpitmishra1805@gmail.com';
 
@@ -22,6 +25,7 @@ export default function ContactForm() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState<Status>('idle');
+  const sendMagnet = useMagnetic<HTMLButtonElement>();
   const [note, setNote] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -72,6 +76,9 @@ export default function ContactForm() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.success) throw new Error(data.message || 'Send failed');
+      // Celebrate from the Send button before the form swaps to the thank-you
+      const btn = form.querySelector('.hello-send')?.getBoundingClientRect();
+      if (btn) burst(btn.left + btn.width / 2, btn.top + btn.height / 2);
       setStatus('sent');
     } catch {
       // Don't lose what they wrote: offer the manual routes instead
@@ -191,8 +198,8 @@ export default function ContactForm() {
           <input type="checkbox" name="botcheck" className="hidden" tabIndex={-1} autoComplete="off" />
 
           <div className="hello-actions">
-            <button type="submit" className="hello-send" disabled={status === 'sending'}>
-              <span>{status === 'sending' ? 'Sending…' : WEB3FORMS_KEY ? 'Send it' : 'Continue'}</span>
+            <button ref={sendMagnet} data-cursor-snap type="submit" className="hello-send magnetic" disabled={status === 'sending'}>
+              <RollText>{status === 'sending' ? 'Sending…' : WEB3FORMS_KEY ? 'Send it' : 'Continue'}</RollText>
               <span className="hello-send-arrow" aria-hidden="true">↗</span>
             </button>
             <p className={`hello-note ${note ? 'is-error' : ''}`} role="status">

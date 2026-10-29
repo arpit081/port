@@ -269,6 +269,29 @@ body,
   z-index: 46;
 }
 
+/* Idle bob while it's the hero button. Only in that state: a transformed
+   anchor would become the containing block for the fixed pill and card. */
+.music-btn-anchor:has(> .music-player-unified:not(.is-fixed)[data-open="false"]) {
+  animation: musicBob 3.5s ease-in-out infinite;
+}
+
+@keyframes musicBob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotate(0.8deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-btn-anchor {
+    animation: none !important;
+  }
+}
+
 @media (max-width: 640px) {
   .music-btn-anchor {
     left: 3%;
@@ -1014,7 +1037,7 @@ body,
 
 .pill-title {
   color: rgba(255, 255, 255, 0.95);
-  font-size: 0.875rem;
+  font-size: 14px; /* px: the pill is a fixed-size widget, it must not grow with the root size */
   font-weight: 600;
   letter-spacing: 0.2px;
   white-space: nowrap;
@@ -1031,7 +1054,7 @@ body,
 
 .pill-artist {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.75rem;
+  font-size: 12px; /* px: the pill is a fixed-size widget, it must not grow with the root size */
   font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
@@ -1141,7 +1164,7 @@ body,
 
 .pill-time {
   color: rgba(255, 255, 255, 0.45);
-  font-size: 0.65rem;
+  font-size: 10.4px; /* px: the pill is a fixed-size widget, it must not grow with the root size */
   font-weight: 500;
   flex-shrink: 0;
   letter-spacing: 0.1px;
@@ -1562,9 +1585,20 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
 
 /* ── AI tile: knowledge graph ── */
 .knowledge-graph {
+  position: relative;
+  isolation: isolate;
   width: 100%;
   max-width: 560px;
-  height: auto;
+  /* Same shape as the SVG's viewBox, so the effects layer's % match its coordinates */
+  aspect-ratio: 420 / 200;
+}
+
+.kg-svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
   overflow: visible;
 }
 
@@ -1586,16 +1620,37 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
   fill: rgba(255, 255, 255, 0.45);
 }
 
-.kg-halo {
-  fill: rgba(196, 181, 253, 0.16);
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: kgPulse 3.2s ease-in-out infinite;
-  animation-play-state: paused;
+/* Effects layer (HTML, so its loops run on the compositor). No z-index or
+   opacity here: its children stack against the SVG (halos under the nodes,
+   the travelling query over them). */
+.kg-fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-.skills-section.is-live .kg-halo {
-  animation-play-state: running;
+/* Halo diameter 22 of 420 viewBox units; margins in % are of the width */
+.kg-halo-pos {
+  position: absolute;
+  z-index: 0;
+  width: 5.238%;
+  aspect-ratio: 1;
+  margin: -2.619% 0 0 -2.619%;
+  opacity: 0;
+  transition: opacity 0.6s ease 0.8s;
+}
+
+.knowledge-graph.is-in .kg-halo-pos {
+  opacity: 1;
+}
+
+.kg-halo {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(196, 181, 253, 0.16);
+  animation: kgPulse 3.2s ease-in-out infinite;
+  animation-play-state: paused;
 }
 
 @keyframes kgPulse {
@@ -1609,6 +1664,58 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
     transform: scale(1.15);
     opacity: 1;
   }
+}
+
+/* A query travelling intent → LLM → Neo4j → Cypher, then resting 1.2s.
+   The layer is the graph's full size, so translate(%) of itself is % of the
+   graph: the dot rides along without anything but transform changing. */
+.kg-travel {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  animation: kgTravel 3.8s ease-in-out 1.6s infinite;
+  animation-play-state: paused;
+}
+
+.kg-travel-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4.286%;
+  aspect-ratio: 1;
+  margin: -2.143% 0 0 -2.143%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, rgba(196, 181, 253, 0.8) 45%, rgba(139, 92, 246, 0) 70%);
+}
+
+@keyframes kgTravel {
+  0% {
+    transform: translate(14.762%, 74%);
+    opacity: 0;
+  }
+
+  22.8% {
+    transform: translate(49.048%, 52%);
+    opacity: 1;
+  }
+
+  45.6% {
+    transform: translate(76.667%, 35%);
+    opacity: 1;
+  }
+
+  68.4%,
+  100% {
+    transform: translate(87.143%, 78%);
+    opacity: 0;
+  }
+}
+
+.skills-section.is-live .kg-halo,
+.skills-section.is-live .kg-travel,
+.skills-section.is-live .api-caret {
+  animation-play-state: running;
 }
 
 .kg-label {
@@ -1676,6 +1783,7 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
   vertical-align: text-bottom;
   background: rgba(255, 255, 255, 0.8);
   animation: caretBlink 1s steps(1) infinite;
+  animation-play-state: paused; /* runs only while Skills is near the screen */
 }
 
 @keyframes caretBlink {
@@ -1706,6 +1814,17 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
   height: 26px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.14);
+}
+
+/* The green "on" state fades in as an overlay (opacity runs on the compositor;
+   animating the track's background repainted it every frame) */
+.ui-toggle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #34c759;
+  opacity: 0;
   animation: uiToggleTrack 3.6s ease-in-out infinite;
 }
 
@@ -1725,12 +1844,12 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
   0%,
   40%,
   100% {
-    background: rgba(255, 255, 255, 0.14);
+    opacity: 0;
   }
 
   50%,
   90% {
-    background: #34c759;
+    opacity: 1;
   }
 }
 
@@ -1813,9 +1932,18 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
 
 .ui-skeleton span {
   height: 7px;
+  position: relative;
+  overflow: hidden;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.1) 100%);
-  background-size: 200% 100%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Shimmer: a highlight band slides across (transform, not background-position) */
+.ui-skeleton span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.18) 50%, rgba(255, 255, 255, 0) 100%);
   animation: uiShimmer 2.2s linear infinite;
 }
 
@@ -1825,11 +1953,11 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
 
 @keyframes uiShimmer {
   from {
-    background-position: 200% 0;
+    transform: translateX(100%);
   }
 
   to {
-    background-position: -200% 0;
+    transform: translateX(-100%);
   }
 }
 
@@ -1896,20 +2024,20 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
 }
 
 /* Loops sit still until the section is on screen */
-.ui-toggle,
+.ui-toggle::before,
 .ui-toggle-knob,
 .ui-slider-fill,
 .ui-button,
-.ui-skeleton span,
+.ui-skeleton span::after,
 .tools-group-chips li {
   animation-play-state: paused;
 }
 
-.skills-section.is-live .ui-toggle,
+.skills-section.is-live .ui-toggle::before,
 .skills-section.is-live .ui-toggle-knob,
 .skills-section.is-live .ui-slider-fill,
 .skills-section.is-live .ui-button,
-.skills-section.is-live .ui-skeleton span,
+.skills-section.is-live .ui-skeleton span::after,
 .skills-section.is-live .tools-group-chips li {
   animation-play-state: running;
 }
@@ -1917,13 +2045,14 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
 @media (prefers-reduced-motion: reduce) {
   .aurora-blob,
   .kg-halo,
-  .ui-toggle,
+  .ui-toggle::before,
   .ui-toggle-knob,
   .ui-slider-fill,
   .ui-button,
-  .ui-skeleton span,
+  .ui-skeleton span::after,
   .tools-group-chips li,
-  .api-caret {
+  .api-caret,
+  .kg-travel {
     animation: none !important;
   }
 }
@@ -1996,6 +2125,11 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
   height: 100%;
   overflow: visible;
   animation: badgeSpin 22s linear infinite;
+  animation-play-state: paused; /* spins only while Say Hello is near the screen */
+}
+
+.hello-section.is-live .hello-badge-ring {
+  animation-play-state: running;
 }
 
 .hello-badge-ring text {
@@ -2246,7 +2380,7 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
   background: #d7e2ea;
   color: #0c0c0c;
   font-size: 0.85rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   cursor: pointer;
@@ -2289,7 +2423,7 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
 
 .hello-sent-title {
   font-size: clamp(1.6rem, 3vw, 2.2rem);
-  font-weight: 800;
+  font-weight: 900;
   color: #ffffff;
 }
 
@@ -2564,13 +2698,18 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
 }
 
 /* ── Numbered rows: the big number gives a small tilt-and-lift ── */
+/* Row numbers lift and tip back on hover: a soft glide, no overshoot. Any
+   rule that changes their colour must keep transform in the transition too,
+   or the lift snaps instead of easing (that was the "abrupt jump"). */
 .q-num {
   transform-origin: 30% 100%;
-  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition:
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.5s ease;
 }
 
 .q-row:hover .q-num {
-  transform: translateY(-4px) rotate(-3deg);
+  transform: translateY(-6px) rotate(-3deg);
 }
 
 /* ── Interest row quirks (Outside the Code) ── */
@@ -3278,4 +3417,721 @@ html[data-liquid][data-glass-focus] .hello-badge-ring {
   letter-spacing: -0.01em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.5);
+}
+
+/* ═══════════════════════════════════════
+   Magnetic buttons (useMagnetic sets --mx/--my while hovered, mouse only).
+   `translate` is separate from `transform`, so hover scales still apply.
+   Kept last so this transition list wins over each button's own.
+   ═══════════════════════════════════════ */
+.magnetic {
+  translate: var(--mx, 0px) var(--my, 0px);
+  transition:
+    translate 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1),
+    background 0.3s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* ═══════════════════════════════════════
+   Hero headline entrance: letters rise and fade in one after another.
+   Each letter carries the gradient (see "Split-letter gradient headings").
+   ═══════════════════════════════════════ */
+.hero-letter {
+  display: inline-block;
+}
+
+.hero-letter.is-rising {
+  animation: heroRise 1s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+  animation-delay: calc(0.2s + var(--i) * 0.045s);
+}
+
+@keyframes heroRise {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em) rotate(5deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-letter.is-rising {
+    animation: none;
+  }
+}
+
+/* Scroll progress traced around the nav dot. Starts at 12 o'clock; framer
+   drives the bar's pathLength from scrollYProgress (one attribute per frame). */
+.nav-progress {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  pointer-events: none;
+  overflow: visible;
+}
+
+.nav-progress-track,
+.nav-progress-bar {
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.nav-progress-track {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.nav-progress-bar {
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-linecap: round;
+}
+
+/* SectionDepth: the black overlay a section darkens under as it scrolls away,
+   and a layer hint only while that's happening */
+.recede-dim {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  border-radius: inherit;
+  background: #000000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+[data-receding] {
+  will-change: transform;
+}
+
+/* Project stack: shade over a card as later cards bury it */
+.card-shade {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #000000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Hover tilt (useTilt sets the vars, mouse only) */
+.tilt {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--ts, 1));
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Film grain on the dark sections: a static tile, never animated.
+   It's 2x resolution (360px shown at 180px), so on 125%/150% display scaling
+   it's only ever scaled down and the specks stay crisp; a 1x tile got
+   stretched into an invisible blur there. Baked from SVG feTurbulence noise
+   (only the brightest ~30% as faint white specks, so the black stays black);
+   a live SVG background cost ~14% more paint work while scrolling.
+   Recipe: feTurbulence fractalNoise, baseFrequency 0.8, 3 octaves, stitched;
+   alpha = 0.9 * noise - 0.5; rendered at 2x over black, brightness -> alpha. */
+.grain {
+  background-image: url('/grain.webp');
+  background-repeat: repeat;
+  background-size: 180px 180px;
+}
+
+/* ═══════════════════════════════════════
+   Reveal footer (see RevealFooter.tsx). The box tucks under Say Hello's
+   rounded bottom corners; its fixed inner layer is clipped to the box.
+   ═══════════════════════════════════════ */
+.reveal-footer {
+  /* wordmark (14.2vw at line-height 0.8) + meta row + a bottom band where the
+     fixed music pill rests (it's 68px tall, 28px up) */
+  --footer-h: calc(11.4vw + 7.5rem + 120px);
+  position: relative;
+  z-index: 0;
+  height: var(--footer-h);
+  margin-top: -60px;
+  clip-path: inset(0);
+}
+
+.reveal-footer-inner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--footer-h);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  padding: 0 1.25rem 120px;
+  color: #0c0c0c;
+}
+
+.reveal-footer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 24px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(12, 12, 12, 0.5);
+}
+
+.reveal-footer-word {
+  font-size: 14.2vw;
+  font-weight: 900;
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .reveal-footer-word {
+    font-size: 13vw;
+  }
+}
+
+@media (min-width: 768px) {
+  .reveal-footer-inner {
+    padding: 0 2.5rem 120px;
+  }
+}
+
+/* Open menu: the section you're in gets a lit dot and brighter text */
+.nav-menu-link {
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-menu-link::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.nav-menu-link[aria-current] {
+  color: #ffffff;
+}
+
+.nav-menu-link[aria-current]::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ═══════════════════════════════════════
+   Split-letter gradient headings (hero, About, Skills, Projects, Say Hello).
+   A text-clipped gradient only paints inside its own box, and heavy Kanit
+   glyphs (P, R, A, the comma's tail) are wider than their box, more so with
+   tight tracking: the overhang came out invisible, cutting the letter.
+   Padding grows each letter's paint box on every side; the equal negative
+   margin keeps spacing and layout exactly as before. The stops are rescaled
+   so the colours land where they did across the 1em line.
+   ═══════════════════════════════════════ */
+.hero-letter,
+.q-letter.hero-heading,
+.hello-letter.hero-heading {
+  padding: 0.12em 0.18em 0.2em;
+  margin: -0.12em -0.18em -0.2em;
+  /* line runs from 0.12em to 1.12em of a 1.32em box */
+  background-image: linear-gradient(180deg, #646973 9.1%, #bbccd7 84.8%);
+}
+
+/* ═══════════════════════════════════════
+   Hero headline size. Its ink is 5.64em wide, so the size is set to fit that
+   exactly between the page's side margins (the nav and intro gutters:
+   1.5rem on phones, 2.5rem from 768px). cqw is the hero's own width, which
+   excludes a desktop scrollbar (vw includes it, so a vw size ran under it).
+   The ink sits 0.032em right of centre (tight tracking trims the last
+   letter's side), so the right padding nudges it back to the middle.
+   ═══════════════════════════════════════ */
+.hero-title-box {
+  container-type: inline-size;
+}
+
+.hero-title {
+  font-size: calc((100cqw - 3rem) / 5.7);
+  padding-right: 0.064em;
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: calc((100cqw - 5rem) / 5.7);
+  }
+}
+
+/* ═══════════════════════════════════════
+   Heading reveal (QuirkyText reveal): the first time a section heading is
+   half in view, its letters rise and fade in one by one, tilting upright.
+   Transform + opacity only (an earlier clip-line version repainted the
+   clipped words every frame). is-done removes the animation, handing the
+   letters back to the hover quirks untouched.
+   ═══════════════════════════════════════ */
+.q-reveal {
+  display: inline-block;
+}
+
+.q-reveal:not(.is-in) .q-letter {
+  opacity: 0;
+  transform: translateY(0.6em);
+}
+
+.q-reveal.is-in:not(.is-done) .q-letter {
+  animation: qRise 0.9s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+  animation-delay: calc(var(--i) * 35ms);
+}
+
+@keyframes qRise {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em) rotate(7deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .q-reveal .q-letter {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Road So Far ink numbers (InkNumber.tsx): a hairline outline that fills
+   with solid ink from the bottom as the entry scrolls into reading position.
+   The window is padded beyond the digits (and the ink copy offset back), so
+   no glyph edge is ever clipped; percentages are of the window's height.
+   ═══════════════════════════════════════ */
+.ink-num {
+  position: relative;
+}
+
+.ink-outline {
+  display: block;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(12, 12, 12, 0.3);
+}
+
+.ink-window {
+  position: absolute;
+  inset: -0.2em -0.25em;
+  overflow: hidden;
+}
+
+/* Same box as the window (padding inside), so translate(-100%) moves it
+   exactly as far as the window moves the other way */
+.ink-fill {
+  position: absolute;
+  inset: 0;
+  padding: 0.2em 0.25em;
+  color: #0c0c0c;
+}
+
+/* Project images rise, fade in and settle from a slight zoom the first time
+   their card is seen. Opacity + the `translate`/`scale` properties (separate
+   from the hover tilt's `transform`), all compositor work; a clip-path
+   unmask cost ~1s of main-thread paint per scroll on phones. */
+.img-reveal {
+  opacity: 0;
+  translate: 0 48px;
+  scale: 1.06;
+}
+
+.is-seen .img-reveal {
+  animation: imgReveal 1s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+@keyframes imgReveal {
+  from {
+    opacity: 0;
+    translate: 0 48px;
+    scale: 1.06;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .img-reveal,
+  .is-seen .img-reveal {
+    opacity: 1;
+    translate: none;
+    scale: 1;
+    animation: none;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Rolling labels (RollText): on hover the label slides up out of view and an
+   identical copy rolls in from below. The window is padded (and the padding
+   cancelled) so glyphs aren't clipped. Mouse only; transform only.
+   ═══════════════════════════════════════ */
+.roll {
+  display: inline-grid;
+  overflow: hidden;
+  padding: 0.15em 0.08em;
+  margin: -0.15em -0.08em;
+  vertical-align: top;
+}
+
+.roll-a,
+.roll-b {
+  grid-area: 1 / 1;
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.roll-b {
+  transform: translateY(130%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :is(a, button):hover .roll-a {
+    transform: translateY(-130%);
+  }
+
+  :is(a, button):hover .roll-b {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll-a,
+  .roll-b {
+    transition: none;
+  }
+
+  :is(a, button):hover .roll-a {
+    transform: none;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Outside the Code: hovering a row sweeps a black fill in from the left
+   behind it (scaleX) and the row turns white. Mouse only.
+   ═══════════════════════════════════════ */
+.interest-row {
+  position: relative;
+  isolation: isolate;
+}
+
+.interest-row::before {
+  content: "";
+  position: absolute;
+  inset: -1px -1.25rem 0;
+  z-index: -1;
+  border-radius: 24px;
+  background: #0c0c0c;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.interest-row h3,
+.interest-row p {
+  transition: color 0.4s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .interest-row:hover::before {
+    transform: scaleX(1);
+  }
+
+  .interest-row:hover .q-num,
+  .interest-row:hover h3 {
+    color: #ffffff;
+  }
+
+  .interest-row:hover p {
+    color: rgba(255, 255, 255, 0.62);
+  }
+}
+
+/* Skills: chips pop in one after another the first time their tile is seen */
+.skill-chips li {
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.skill-tile:not(.is-seen) .skill-chips li {
+  opacity: 0;
+  transform: translateY(10px) scale(0.85);
+}
+
+.skill-tile.is-seen .skill-chips li {
+  animation: chipIn 0.55s cubic-bezier(0.34, 1.45, 0.64, 1) both;
+  animation-delay: calc(0.35s + var(--ci) * 35ms);
+}
+
+@keyframes chipIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.85);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .skill-chips li:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skill-tile .skill-chips li {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+/* Nav dot over white sections: light glass, dark icon and progress ring */
+.nav-shell .nav-glass {
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+
+.nav-shell.on-light {
+  color: rgba(12, 12, 12, 0.78);
+}
+
+.nav-shell.on-light .nav-glass {
+  background: rgba(255, 255, 255, calc(0.82 - 0.3 * var(--glass, 0)));
+  border-color: rgba(12, 12, 12, 0.1);
+}
+
+.nav-shell.on-light .nav-progress-track {
+  stroke: rgba(12, 12, 12, 0.08);
+}
+
+.nav-shell.on-light .nav-progress-bar {
+  stroke: rgba(12, 12, 12, 0.7);
+}
+
+.nav-shell.on-light:hover {
+  color: #0c0c0c;
+}
+
+/* Message-sent confetti (lib/burst.ts): a fixed layer above the page */
+.burst-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.burst-bit {
+  position: absolute;
+  will-change: transform, opacity;
+}
+
+/* ═══════════════════════════════════════
+   Hero glow: two soft colour pools drifting slowly behind the headline.
+   Radial gradients are soft-edged on their own (no blur filter); each is
+   drawn once and only moves by transform, and only while the hero is on
+   screen (is-live). Clipped to the hero so it never bleeds into About.
+   ═══════════════════════════════════════ */
+.hero-glow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-glow-blob {
+  position: absolute;
+  width: 55vmax;
+  height: 55vmax;
+  border-radius: 50%;
+  /* its own pre-drawn layer: the drift just slides a cached texture */
+  will-change: transform;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-play-state: paused;
+}
+
+.hero-glow-a {
+  top: -18vmax;
+  left: -10vmax;
+  background: radial-gradient(circle, rgba(99, 72, 246, 0.2) 0%, rgba(99, 72, 246, 0.07) 38%, rgba(99, 72, 246, 0) 68%);
+  animation-name: heroGlowA;
+  animation-duration: 26s;
+}
+
+.hero-glow-b {
+  bottom: -26vmax;
+  right: -14vmax;
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.14) 0%, rgba(20, 184, 166, 0.05) 40%, rgba(20, 184, 166, 0) 68%);
+  animation-name: heroGlowB;
+  animation-duration: 32s;
+}
+
+#home.is-live .hero-glow-blob {
+  animation-play-state: running;
+}
+
+@keyframes heroGlowA {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+
+  to {
+    transform: translate(18vw, 12vh) scale(1.15);
+  }
+}
+
+@keyframes heroGlowB {
+  from {
+    transform: translate(0, 0) scale(1.1);
+  }
+
+  to {
+    transform: translate(-20vw, -14vh) scale(0.95);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-glow-blob {
+    animation: none;
+  }
+}
+
+/* Hero scatter: each headline letter's wrapper (ScatterLetter) */
+.hero-letter-wrap {
+  display: inline-block;
+}
+
+/* The lens shows a still copy of the hero; while the page scrolls (and the
+   letters scatter) it would disagree with them, so it steps aside */
+.hero-lens-anchor {
+  transition: opacity 0.2s ease;
+}
+
+html[data-scrolling] .hero-lens-anchor {
+  opacity: 0;
+}
+
+/* Footer wordmark letters rise from behind the line they sit on (RevealFooter).
+   The clip is generous above (tall Kanit capitals) and at the sides, and
+   just below the line, so only the rising letters are hidden. */
+.reveal-footer-word {
+  clip-path: inset(-0.6em -0.3em -0.08em -0.3em);
+}
+
+.reveal-footer-letter {
+  display: inline-block;
+}
+
+/* ═══════════════════════════════════════
+   Custom cursor (Cursor.tsx, desktop only). Everything inverts what's under
+   it (difference), so it's white on dark sections and black on white.
+   The ring trails the pointer; over a button it morphs into an outline
+   hugging that button (size and radius ease); over a big row a chip rides
+   beside the pointer. Nothing ever covers what you're pointing at.
+   ═══════════════════════════════════════ */
+.cursor-ring,
+.cursor-dot,
+.cursor-chip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10001;
+  pointer-events: none;
+  mix-blend-mode: difference;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.cursor-ring.is-shown,
+.cursor-dot.is-shown,
+.cursor-chip.is-shown {
+  opacity: 1;
+}
+
+.cursor-ring {
+  width: 0;
+  height: 0;
+}
+
+.cursor-ring-shape {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  border: 1.5px solid #ffffff;
+  transition:
+    width 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-width 0.3s ease;
+}
+
+/* Wrapping a button: a slightly bolder outline */
+.cursor-ring.is-snap .cursor-ring-shape {
+  border-width: 2px;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+/* Chip beside the pointer over big rows: white pill, black word (which in
+   difference mode reads dark on dark sections, light on white ones) */
+.cursor-chip {
+  width: 0;
+  height: 0;
+}
+
+.cursor-chip-text {
+  position: absolute;
+  left: 16px;
+  top: 14px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: scale(0.7);
+  transform-origin: 0 0;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cursor-chip.is-shown .cursor-chip-text {
+  transform: scale(1);
 }

@@ -1,9 +1,11 @@
+import InkNumber from './InkNumber';
 import FadeIn from './FadeIn';
 import QuirkyText from './QuirkyText';
+import SectionDepth from './SectionDepth';
 
 export default function RoadSoFarSection() {
   return (
-    <section id="road-so-far" className="relative z-10 rounded-t-[40px] bg-white px-5 py-20 sm:rounded-t-[50px] sm:px-8 sm:py-24 md:rounded-t-[60px] md:px-10 md:py-32">
+    <SectionDepth id="road-so-far" className="relative z-10 rounded-t-[40px] bg-white px-5 py-20 sm:rounded-t-[50px] sm:px-8 sm:py-24 md:rounded-t-[60px] md:px-10 md:py-32">
 
       <FadeIn
         y={40}
@@ -11,7 +13,7 @@ export default function RoadSoFarSection() {
         className="mb-8 text-center font-black uppercase leading-none tracking-tight text-[#0C0C0C] sm:mb-10 md:mb-14"
         style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
       >
-        <QuirkyText text="ROAD SO FAR" variant="quirk-drive" />
+        <QuirkyText text="ROAD SO FAR" variant="quirk-drive" reveal />
       </FadeIn>
 
       <FadeIn y={30} delay={0.2} className="mx-auto mb-16 max-w-2xl text-center sm:mb-20 md:mb-24">
@@ -24,7 +26,7 @@ export default function RoadSoFarSection() {
         {/* Entry 01 */}
         <FadeIn delay={0.1} y={30}>
           <article className="q-row flex gap-5 border-t border-[rgba(12,12,12,0.15)] py-8 sm:gap-8 sm:py-10 md:gap-12 md:py-12">
-            <div className="q-num shrink-0 font-black leading-none text-[#0C0C0C]" style={{ fontSize: 'clamp(3rem, 10vw, 140px)' }}>01</div>
+            <InkNumber value="01" />
             <div className="pt-1 sm:pt-3 flex-1">
               <div className="mb-4 flex flex-col sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
                 <div>
@@ -46,7 +48,7 @@ export default function RoadSoFarSection() {
         {/* Entry 02 */}
         <FadeIn delay={0.2} y={30}>
           <article className="q-row flex gap-5 border-t border-[rgba(12,12,12,0.15)] py-8 sm:gap-8 sm:py-10 md:gap-12 md:py-12">
-            <div className="q-num shrink-0 font-black leading-none text-[#0C0C0C]" style={{ fontSize: 'clamp(3rem, 10vw, 140px)' }}>02</div>
+            <InkNumber value="02" />
             <div className="pt-1 sm:pt-3 flex-1">
               <div className="mb-4 flex flex-col sm:mb-6 sm:flex-row sm:items-end sm:justify-between">
                 <div>
@@ -68,7 +70,7 @@ export default function RoadSoFarSection() {
         {/* Entry 03 */}
         <FadeIn delay={0.3} y={30}>
           <article className="q-row flex gap-5 border-t border-[rgba(12,12,12,0.15)] py-8 sm:gap-8 sm:py-10 md:gap-12 md:py-12">
-            <div className="q-num shrink-0 font-black leading-none text-[#0C0C0C]" style={{ fontSize: 'clamp(3rem, 10vw, 140px)' }}>03</div>
+            <InkNumber value="03" />
             <div className="pt-1 flex-1 sm:pt-3">
               <div className="mb-4 sm:mb-6">
                 <h3 className="font-medium uppercase text-[#0C0C0C]" style={{ fontSize: 'clamp(1rem, 2.2vw, 2.1rem)' }}>STILL BECOMING</h3>
@@ -86,6 +88,6 @@ export default function RoadSoFarSection() {
 
         <div className="border-t border-[rgba(12,12,12,0.15)]" />
       </div>
-    </section>
+    </SectionDepth>
   );
 }

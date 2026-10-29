@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useInView } from 'framer-motion';
 import FadeIn from './FadeIn';
 import ContactForm from './contact/ContactForm';
+import RollText from './RollText';
 import { RESUME_FILENAME, RESUME_URL, smoothScrollTo } from '@/lib/utils';
 
 type Contact = {
@@ -63,17 +65,18 @@ function ContactRow({ contact, index }: { contact: Contact; index: number }) {
       </a>
       {contact.copy && (
         <button
+          data-cursor-snap
           type="button"
           className={`hello-copy ${copied ? 'is-copied' : ''}`}
           onClick={copy}
           aria-label={`Copy ${contact.label.toLowerCase()}`}
         >
-          {copied ? 'Copied' : 'Copy'}
+          <RollText>{copied ? 'Copied' : 'Copy'}</RollText>
         </button>
       )}
       {contact.download && (
-        <a className="hello-copy" href={contact.href} download={contact.download} aria-label={`Download ${contact.label.toLowerCase()} (PDF)`}>
-          Download
+        <a data-cursor-snap className="hello-copy" href={contact.href} download={contact.download} aria-label={`Download ${contact.label.toLowerCase()} (PDF)`}>
+          <RollText>Download</RollText>
         </a>
       )}
     </li>
@@ -81,10 +84,15 @@ function ContactRow({ contact, index }: { contact: Contact; index: number }) {
 }
 
 export default function ContactSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  // The sticker only spins while the section is near the screen
+  const isLive = useInView(sectionRef, { margin: '200px' });
+
   return (
     <section
+      ref={sectionRef}
       id="contact"
-      className="hello-section relative z-10 -mt-10 rounded-t-[40px] bg-[#0C0C0C] px-5 pt-20 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 sm:pt-24 md:-mt-14 md:rounded-t-[60px] md:px-10 md:pt-32"
+      className={`hello-section grain ${isLive ? 'is-live' : ''} relative z-10 -mt-10 rounded-t-[40px] bg-[#0C0C0C] px-5 pt-20 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 sm:pt-24 md:-mt-14 md:rounded-t-[60px] md:px-10 md:pt-32 rounded-b-[40px] sm:rounded-b-[50px] md:rounded-b-[60px]`}
     >
       <div className="relative mx-auto max-w-6xl">
         <FadeIn y={40} as="div" className="mb-8 text-center sm:mb-10 md:mb-12">

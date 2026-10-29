@@ -1,5 +1,6 @@
+import { useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import type { ReactNode } from 'react';
 
 type SkillTileProps = {
   index: string;
@@ -20,6 +21,8 @@ const EASE = [0.25, 0.1, 0.25, 1] as const;
  * highlight, edge glow), which costs no more than the frosted look.
  */
 export default function SkillTile({ index, title, blurb, chips, className = '', delay = 0, children }: SkillTileProps) {
+  // Chips pop in, one after another, the first time the tile is on screen
+  const [seen, setSeen] = useState(false);
   // Feeds the cursor-following highlight in CSS
   const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -31,10 +34,11 @@ export default function SkillTile({ index, title, blurb, chips, className = '', 
     // Fades itself in rather than via a FadeIn wrapper: an ancestor with
     // opacity < 1 would cut the tile's backdrop blur off mid-animation
     <motion.article
-      className={`skill-tile lg-rim ${className}`}
+      className={`skill-tile lg-rim ${seen ? 'is-seen' : ''} ${className}`}
       initial={{ opacity: 0, scale: 0.96 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, margin: '-60px' }}
+      onViewportEnter={() => setSeen(true)}
       whileHover={{ y: -4 }}
       transition={{
         opacity: { duration: 0.7, delay, ease: EASE },
@@ -53,7 +57,7 @@ export default function SkillTile({ index, title, blurb, chips, className = '', 
 
       {chips && (
         <ul className="skill-chips" aria-label={`${title} skills`}>
-          {chips.map((chip) => <li key={chip}>{chip}</li>)}
+          {chips.map((chip, i) => <li key={chip} style={{ '--ci': i } as CSSProperties}>{chip}</li>)}
         </ul>
       )}
     </motion.article>

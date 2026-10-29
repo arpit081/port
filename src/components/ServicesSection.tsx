@@ -3,6 +3,7 @@ import FadeIn from './FadeIn';
 import QuirkyText from './QuirkyText';
 import InterestPreview from './interests/InterestPreview';
 import type { InterestClip } from './interests/InterestPreview';
+import SectionDepth from './SectionDepth';
 
 // Fields: number, name, description, hover quirk (see "Interest row quirks"
 // in index.css), preview clip key (files in /public/videos/interests)
@@ -21,21 +22,21 @@ export default function ServicesSection() {
   const [active, setActive] = useState<string | null>(null);
 
   return (
-    <section id="interests" className="rounded-t-[40px] bg-white px-5 py-20 sm:rounded-t-[50px] sm:px-8 sm:py-24 md:rounded-t-[60px] md:px-10 md:py-32">
+    <SectionDepth scaleTo={1} id="interests" className="relative rounded-t-[40px] bg-white px-5 py-20 sm:rounded-t-[50px] sm:px-8 sm:py-24 md:rounded-t-[60px] md:px-10 md:py-32">
       <FadeIn
         y={40}
         as="h2"
         className="mb-16 text-center font-black uppercase leading-none tracking-tight text-[#0C0C0C] sm:mb-20 md:mb-28"
         style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}
       >
-        <QuirkyText text="OUTSIDE THE CODE" variant="quirk-escape" />
+        <QuirkyText text="OUTSIDE THE CODE" variant="quirk-escape" reveal />
       </FadeIn>
       <div className="mx-auto max-w-5xl" onPointerLeave={() => setActive(null)}>
         {services.map(([number, name, description, quirk, clip], index) => (
           <FadeIn key={number} delay={index * 0.1} y={30}>
             <article
               data-clip={clip}
-              className="q-row flex gap-5 border-t border-[rgba(12,12,12,0.15)] py-8 sm:gap-8 sm:py-10 md:gap-12 md:py-12"
+              className="q-row interest-row flex gap-5 border-t border-[rgba(12,12,12,0.15)] py-8 sm:gap-8 sm:py-10 md:gap-12 md:py-12"
               onPointerEnter={(e) => { if (e.pointerType === 'mouse') setActive(clip); }}
             >
               <div className="q-num shrink-0 font-black leading-none text-[#0C0C0C]" style={{ fontSize: 'clamp(3rem, 10vw, 140px)' }}>{number}</div>
@@ -54,6 +55,6 @@ export default function ServicesSection() {
       {/* Outside the FadeIn wrappers on purpose: it's position: fixed, and a
           transformed ancestor would pin it to that ancestor instead of the screen */}
       <InterestPreview active={active} clips={clips} />
-    </section>
+    </SectionDepth>
   );
 }

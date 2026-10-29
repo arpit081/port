@@ -7,8 +7,15 @@
     <meta name="description" content="AI Engineer building intelligent applications with LLMs, RAG pipelines, knowledge graphs and backend technologies." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Only the weights the site uses (300-700, 900); preload so the font
+         request starts with the HTML instead of after the CSS is parsed -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap"
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;900&display=swap"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;900&display=swap"
       rel="stylesheet"
     />
     <meta property="og:title" content="Arpit Mishra – AI Engineer" />
